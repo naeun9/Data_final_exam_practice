@@ -1,913 +1,393 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>데이터패턴인식 기말고사 총정리</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        body { font-family: 'Malgun Gothic', sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f8f9fa; }
-        h1 { text-align: center; color: #2c3e50; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
-        h2 { color: #2980b9; margin-top: 40px; border-left: 5px solid #2980b9; padding-left: 10px; background: #ecf0f1; padding: 10px 10px 10px 15px; border-radius: 4px; }
-        .question-card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .question-title { font-weight: bold; font-size: 1.1em; margin-bottom: 15px; }
-        .options { list-style-type: none; padding-left: 0; }
-        .options li { margin-bottom: 10px; padding: 10px; background: #f1f2f6; border-radius: 5px; cursor: pointer; transition: background 0.3s; }
-        .options li:hover { background: #eccc68; }
-        .code-block { background: #2f3542; color: #f1f2f6; padding: 10px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; margin: 10px 0; }
-        .answer-btn { background-color: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold; }
-        .answer-btn:hover { background-color: #27ae60; }
-        .answer-section { display: none; margin-top: 15px; padding: 15px; background: #e8f8f5; border-left: 4px solid #1abc9c; border-radius: 4px; }
-    </style>
-    <script>
-        function toggleAnswer(id) {
-            var el = document.getElementById('ans-' + id);
-            if (el.style.display === 'block') {
-                el.style.display = 'none';
-            } else {
-                el.style.display = 'block';
-            }
-        }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터패턴인식 기말 총정리</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['$$', '$$']] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+:root{
+  --bg:#f4f5f7; --surface:#ffffff; --ink:#1c2230; --muted:#5a6273;
+  --line:#e2e5eb; --brand:#3b4cca; --brand-ink:#2c3aa8;
+  --ok-bg:#e7f5ee; --ok-line:#1f9d63; --ok-ink:#13653f;
+  --code-bg:#1e2230; --code-ink:#e7eaf3;
+  --focus:#1f63ff; --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#11141b; --surface:#1a1e29; --ink:#eef1f7; --muted:#a3acbe;
+    --line:#2b3140; --brand:#8b9bff; --brand-ink:#aab6ff;
+    --ok-bg:#10261c; --ok-line:#34c27d; --ok-ink:#7ee2b0;
+    --code-bg:#0c0e15; --code-ink:#e3e7f2; --focus:#7aa2ff;
+  }
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{transition:none !important; animation:none !important;}
+}
+body{
+  font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  line-height:1.65; color:var(--ink); background:var(--bg);
+  margin:0; padding:0 16px 80px;
+}
+.skip{position:absolute; left:-9999px; top:0; background:var(--brand); color:#fff; padding:10px 16px; border-radius:0 0 8px 0; z-index:50;}
+.skip:focus{left:0;}
+.wrap{max-width:840px; margin:0 auto;}
+header{padding:56px 0 28px; text-align:center;}
+header .eyebrow{font-size:.8rem; letter-spacing:.14em; text-transform:uppercase; color:var(--brand); font-weight:700;}
+header h1{font-size:clamp(1.7rem,5vw,2.5rem); line-height:1.2; margin:.4em 0 .25em; letter-spacing:-.02em;}
+header p{color:var(--muted); margin:0; font-size:.95rem;}
+
+nav.toc{
+  position:sticky; top:0; z-index:20; background:var(--bg);
+  display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+  padding:14px 0; margin-bottom:18px; border-bottom:1px solid var(--line);
+}
+nav.toc a{
+  font-size:.85rem; font-weight:600; text-decoration:none; color:var(--muted);
+  padding:7px 13px; border:1px solid var(--line); border-radius:999px; background:var(--surface);
+}
+nav.toc a:hover{color:var(--ink); border-color:var(--brand);}
+nav.toc a:focus-visible, .ctrl:focus-visible, summary:focus-visible, .toc a:focus-visible{
+  outline:3px solid var(--focus); outline-offset:2px;
+}
+
+.controls{display:flex; justify-content:flex-end; margin:0 0 16px;}
+.ctrl{
+  font:inherit; font-size:.85rem; font-weight:600; cursor:pointer;
+  background:var(--surface); color:var(--ink); border:1px solid var(--line);
+  border-radius:999px; padding:8px 16px;
+}
+.ctrl:hover{border-color:var(--brand);}
+
+section{margin-bottom:46px;}
+section > h2{
+  font-size:1.15rem; letter-spacing:-.01em; margin:0 0 6px;
+  display:flex; align-items:baseline; gap:10px;
+}
+section > h2 .badge{
+  font-size:.72rem; font-weight:700; color:var(--brand-ink);
+  background:color-mix(in srgb, var(--brand) 14%, transparent);
+  border-radius:6px; padding:3px 8px; letter-spacing:.02em;
+}
+section > .sec-desc{color:var(--muted); font-size:.88rem; margin:0 0 18px;}
+
+article.q{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:22px 22px 18px; margin-bottom:16px;
+}
+article.q .qhead{display:flex; gap:12px; align-items:flex-start;}
+article.q .qnum{
+  flex:0 0 auto; font-size:.78rem; font-weight:700; color:var(--brand-ink);
+  background:color-mix(in srgb, var(--brand) 13%, transparent);
+  border-radius:8px; padding:3px 9px; margin-top:2px; min-width:34px; text-align:center;
+}
+article.q .qtext{font-weight:600; font-size:1.02rem; margin:0;}
+ol.opts{list-style:none; counter-reset:opt; margin:16px 0 0; padding:0;}
+ol.opts li{
+  counter-increment:opt; position:relative; padding:11px 14px 11px 44px;
+  background:color-mix(in srgb, var(--ink) 3%, transparent);
+  border:1px solid transparent; border-radius:9px; margin-bottom:8px; font-size:.95rem;
+}
+ol.opts li::before{
+  content:counter(opt); position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  width:22px; height:22px; border-radius:50%; border:1.5px solid var(--line);
+  display:grid; place-items:center; font-size:.78rem; font-weight:700; color:var(--muted);
+}
+ol.opts li.is-answer{
+  background:var(--ok-bg); border-color:var(--ok-line); color:var(--ok-ink); font-weight:600;
+}
+ol.opts li.is-answer::before{border-color:var(--ok-line); color:var(--ok-ink); background:transparent;}
+
+details.ans{margin-top:14px; border-top:1px dashed var(--line); padding-top:14px;}
+details.ans > summary{
+  list-style:none; cursor:pointer; display:inline-flex; align-items:center; gap:8px;
+  font-weight:700; font-size:.88rem; color:var(--brand-ink);
+  background:color-mix(in srgb, var(--brand) 10%, transparent);
+  border-radius:8px; padding:8px 14px; user-select:none;
+}
+details.ans > summary::-webkit-details-marker{display:none;}
+details.ans > summary::before{content:"▸"; transition:transform .15s;}
+details.ans[open] > summary::before{transform:rotate(90deg);}
+details.ans .body{
+  margin-top:12px; padding:14px 16px; background:var(--ok-bg);
+  border-left:4px solid var(--ok-line); border-radius:0 8px 8px 0; font-size:.92rem;
+}
+details.ans .body .a-label{font-weight:700; color:var(--ok-ink); display:block; margin-bottom:4px;}
+
+pre.code{
+  background:var(--code-bg); color:var(--code-ink); border-radius:9px;
+  padding:14px 16px; overflow-x:auto; font-size:.85rem; line-height:1.5;
+  font-family:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace; margin:10px 0 0;
+}
+.note{font-size:.82rem; color:var(--muted); margin:0 0 16px;}
+mjx-container{overflow-x:auto; overflow-y:hidden;}
+</style>
 </head>
 <body>
+<a class="skip" href="#main">본문 바로가기</a>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">데이터패턴인식</p>
+    <h1>기말고사 총정리</h1>
+    <p>모의고사 4회차 · 기출 족보 20문제 — 총 60문제</p>
+  </header>
 
-    <h1>데이터패턴인식 기말고사 완벽 대비 모의고사 및 기출 족보</h1>
+  <nav class="toc" aria-label="회차 바로가기">
+    <a href="#s1">1회차</a>
+    <a href="#s2">2회차</a>
+    <a href="#s3">3회차</a>
+    <a href="#s4">4회차</a>
+    <a href="#s5">기출 족보</a>
+  </nav>
 
-    <section id="session-1">
-        <h2>📝 1회차 모의고사 (기본 개념 & 트랜스포머/GAN/DDPM)</h2>
-        
-        <div class="question-card">
-            <div class="question-title">1. 트랜스포머(Transformer) 모델의 어텐션 메커니즘에서 쿼리(Query, Q), 키(Key, K), 밸류(Value, V)의 역할에 대한 설명으로 가장 적절한 것은?</div>
-            <ul class="options">
-                <li>1. Query는 입력 단어의 위치 정보를, Key와 Value는 단어의 의미 정보를 담는다.</li>
-                <li>2. Query와 Key의 내적을 통해 연관성(어텐션 스코어)을 구한 뒤, 이를 바탕으로 Value들을 조합하여 문맥을 파악한다.</li>
-                <li>3. Key는 찾고자 하는 목표값이며, Query는 데이터베이스에 저장된 실제 데이터 값이다.</li>
-                <li>4. Value는 다음 단어를 예측하기 위한 정답(Ground Truth) 레이블 역할을 한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('1-1')">정답 및 해설 보기</button>
-            <div id="ans-1-1" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: 어텐션 메커니즘은 내가 찾고자 하는 쿼리(Q)와 데이터의 키(K)의 유사도를 계산하고, 그 가중치에 따라 밸류(V)를 가져오는 원리입니다.
-            </div>
-        </div>
+  <div class="controls">
+    <button class="ctrl" id="toggleAll" type="button" aria-pressed="false">정답 모두 펼치기</button>
+  </div>
 
-        <div class="question-card">
-            <div class="question-title">2. 트랜스포머 모델에서 입력 임베딩에 포지셔널 인코딩(Positional Encoding)을 더해주는 가장 주요한 이유는 무엇인가요?</div>
-            <ul class="options">
-                <li>1. 입력 데이터의 차원을 축소하여 연산 속도를 높이기 위해</li>
-                <li>2. 단어 간의 유사도를 내적(Dot Product)으로 쉽게 계산하기 위해</li>
-                <li>3. 모든 단어를 병렬로 한 번에 처리하므로 단어의 위치(순서) 정보를 모델에 부여하기 위해</li>
-                <li>4. 문장의 전체 길이를 일정한 크기로 정규화하기 위해</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('1-2')">정답 및 해설 보기</button>
-            <div id="ans-1-2" class="answer-section">
-                <strong>정답: 3</strong><br>
-                해설: 트랜스포머는 순차적으로 연산하지 않아 순서 정보가 소실되므로, 사인/코사인 함수 등을 활용한 포지셔널 인코딩으로 각 단어의 위치 지문을 더해줍니다.
-            </div>
-        </div>
+  <main id="main"></main>
+</div>
 
-        <div class="question-card">
-            <div class="question-title">3. 적대적 생성 신경망(GAN)의 학습 과정에 대한 설명으로 틀린 것은?</div>
-            <ul class="options">
-                <li>1. 생성자(Generator)와 판별자(Discriminator)가 서로 경쟁하며 성능을 높이는 미니맥스(Minimax) 게임 구조이다.</li>
-                <li>2. 판별자는 진짜 데이터와 생성자가 만든 가짜 데이터를 구분하도록 학습한다.</li>
-                <li>3. 생성자는 학습 과정에서 진짜 데이터(Real data)를 직접 입력받아 원본과 똑같이 복원하도록 학습한다.</li>
-                <li>4. 손실 함수로 이진 교차 엔트로피(Binary Cross Entropy)를 주로 활용한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('1-3')">정답 및 해설 보기</button>
-            <div id="ans-1-3" class="answer-section">
-                <strong>정답: 3</strong><br>
-                해설: 생성자는 절대 진짜 데이터를 직접 보지 못합니다. 오직 랜덤 노이즈(z)를 입력받아 가짜를 만들고 판별자의 피드백을 통해서만 갱신됩니다.
-            </div>
-        </div>
+<script>
+const data = [
+{ id:"s1", title:"1회차 모의고사", badge:"기본 개념", desc:"트랜스포머 · GAN · DDPM 기초", q:[
+  {n:1, q:"트랜스포머 어텐션에서 쿼리(Q)·키(K)·밸류(V)의 역할로 가장 적절한 것은?",
+   o:["Query는 위치 정보, Key·Value는 의미 정보를 담는다.","Query와 Key의 내적으로 연관성(어텐션 스코어)을 구한 뒤 Value를 조합해 문맥을 파악한다.","Key는 목표값, Query는 DB에 저장된 실제 데이터 값이다.","Value는 다음 단어 예측을 위한 정답(Ground Truth) 레이블이다."],
+   a:2, e:"내가 찾는 쿼리(Q)와 데이터 키(K)의 유사도를 계산하고, 그 가중치로 밸류(V)를 가져오는 원리."},
+  {n:2, q:"입력 임베딩에 포지셔널 인코딩을 더하는 가장 주요한 이유는?",
+   o:["차원을 축소해 연산 속도를 높이려고","내적으로 단어 유사도를 쉽게 계산하려고","모든 단어를 병렬 처리하므로 위치(순서) 정보를 부여하려고","문장 길이를 일정 크기로 정규화하려고"],
+   a:3, e:"트랜스포머는 순차 연산을 안 해 순서 정보가 사라지므로, 사인/코사인 등으로 위치 지문을 더한다."},
+  {n:3, q:"GAN 학습 과정 설명으로 틀린 것은?",
+   o:["생성자와 판별자가 경쟁하는 미니맥스 게임 구조이다.","판별자는 진짜와 가짜를 구분하도록 학습한다.","생성자는 진짜 데이터를 직접 입력받아 원본과 똑같이 복원하도록 학습한다.","손실 함수로 이진 교차 엔트로피(BCE)를 주로 쓴다."],
+   a:3, e:"생성자는 진짜 데이터를 직접 보지 못한다. 랜덤 노이즈(z)만 입력받아 판별자 피드백으로 갱신된다."},
+  {n:4, q:"DDPM 전방 과정(Forward, q-process) 설명으로 가장 적절한 것은?",
+   o:["완전한 노이즈에서 시작해 점진적으로 노이즈를 제거해 원본을 복원한다.","원본 데이터에 정의된 스케줄에 따라 점진적으로 가우시안 노이즈를 추가한다.","입력을 저차원 잠재 공간으로 압축해 저장 공간을 최적화한다.","분류기로 생성 과정을 특정 방향으로 가이드한다."],
+   a:2, e:"전방 과정은 원본에 노이즈 스케줄대로 점진적으로 노이즈를 주입해 오염시키는 과정."},
+  {n:5, q:"LDM이 기본 DDPM과 구별되는 핵심 원리는?",
+   o:["픽셀 공간이 아닌, VAE로 축소된 잠재 공간에서 노이즈 주입·제거를 수행한다.","전방 과정을 완전히 생략해 속도를 수천 배 높였다.","이미지 생성을 포기하고 텍스트만 생성하도록 트랜스포머로 대체했다.","한 스텝 만에 노이즈에서 완벽한 이미지를 만든다."],
+   a:1, e:"픽셀 전체 연산은 비싸므로 VAE로 압축한 잠재 공간에서 디퓨전을 수행하는 게 핵심."},
+  {n:6, q:"Grad-CAM이 기존 CAM 대비 갖는 가장 큰 장점은?",
+   o:["검은색 패치로 가리며 비교하므로 직관적이다.","GAP 삽입 등 구조 변경 없이 기울기(Gradient)로 바로 적용 가능하다.","연산량이 10배 이상 줄어 실시간 분할에 쓸 수 있다.","CNN뿐 아니라 결정트리·SVM 등 모든 알고리즘에 적용된다."],
+   a:2, e:"CAM은 GAP 레이어 삽입 등 구조 변경이 필요하지만, Grad-CAM은 역전파 기울기로 구조 변경 없이 적용."},
+  {n:7, q:"가림 민감도(Occlusion Sensitivity) 설명으로 가장 적절한 것은?",
+   o:["특정 영역을 패치로 가렸을 때 예측 확률 하락 정도로 중요도를 파악한다.","내부 가중치 행렬을 직접 분석해 활성화된 뉴런을 시각화한다.","노이즈를 점진적으로 더하며 원본이 사라지는 시점을 측정한다.","가짜 이미지가 실제와 픽셀 단위로 얼마나 다른지 측정한다."],
+   a:1, e:"가렸을 때 판단 확률이 떨어지는 영역이 곧 판단의 핵심 근거라는 블랙박스 접근법."},
+  {n:8, q:"MAML의 Inner Loop와 Outer Loop 역할로 알맞은 것은?",
+   o:["Inner는 메타 파라미터를 갱신, Outer는 태스크 초기화 값을 찾는다.","Inner는 서포트 셋으로 태스크에 빠르게 적응, Outer는 쿼리 셋 손실로 메타 파라미터를 갱신한다.","둘 다 동일 데이터로 파라미터를 두 번 연속 갱신한다.","Inner는 생성자, Outer는 판별자를 학습한다."],
+   a:2, e:"Inner는 모의고사(Support)로 적응, Outer는 실전(Query)으로 근본 능력(메타 파라미터)을 갱신."},
+  {n:9, q:"AGI가 기존 ANI와 구별되는 핵심 특징은?",
+   o:["처리 데이터양이 수십 배 늘어난 초거대 모델이다.","고정된 환경 내에서만 최적 효율을 내도록 설계됐다.","여러 환경에서 스스로 문제를 정의하며 '학습하는 방법' 자체를 터득한다.","정형 데이터만 처리해 예측의 완벽성을 보장한다."],
+   a:3, e:"AGI는 새 환경·규칙에서도 메타 러닝으로 학습 방법을 터득하고 자율적으로 진화한다."},
+  {n:10, q:"오토인코더 인코더·디코더 구조의 올바른 설명은?",
+   o:["인코더는 차원을 축소해 특징을 압축, 디코더는 이를 바탕으로 원본을 재구성한다.","인코더는 노이즈로 가짜를 생성, 디코더는 진짜인지 판별한다.","인코더는 텍스트로 이미지를 렌더링, 디코더는 캡션을 단다.","인코더는 고해상도 이미지를 생성, 디코더는 노이즈를 추가한다."],
+   a:1, e:"압축(인코딩) 후 복원(디코딩)으로 주요 특징(Latent)을 학습하는 비지도 학습."},
+]},
 
-        <div class="question-card">
-            <div class="question-title">4. 디퓨전 모델(DDPM)의 전방 과정(Forward Process, q-process)에 대한 설명으로 가장 적절한 것은?</div>
-            <ul class="options">
-                <li>1. 완전한 노이즈 이미지로부터 시작하여 점진적으로 노이즈를 제거해 원본 이미지를 복원한다.</li>
-                <li>2. 원본 데이터에 사전에 정의된 스케줄에 따라 점진적으로 가우시안 노이즈를 추가하여 노이즈 상태로 만든다.</li>
-                <li>3. 입력된 이미지를 저차원의 잠재 공간(Latent Space)으로 압축하여 저장 공간을 최적화한다.</li>
-                <li>4. 분류기(Classifier)를 이용하여 생성 과정을 특정 방향으로 가이드한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('1-4')">정답 및 해설 보기</button>
-            <div id="ans-1-4" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: 전방 과정은 원본 이미지에 노이즈 스케줄에 따라 점진적으로 노이즈를 주입하여 오염시키는 과정입니다.
-            </div>
-        </div>
+{ id:"s2", title:"2회차 모의고사", badge:"세부 메커니즘", desc:"세부 동작 · 앙상블", q:[
+  {n:11, q:"오토인코더 학습 목적·특성으로 가장 적절하지 않은 것은?",
+   o:["인코더는 차원을 축소해 잠재 벡터를 추출한다.","디코더는 잠재 벡터로 원본과 최대한 동일하게 복원한다.","주로 지도 학습이며 사람이 라벨링한 정답이 대량 필요하다.","LDM은 이 VAE 구조로 데이터를 압축한 뒤 연산한다."],
+   a:3, e:"오토인코더는 입력을 정답으로 삼는 자가지도(비지도) 학습이라 별도 라벨링이 필요 없다."},
+  {n:12, q:"멀티 헤드 어텐션을 쓰는 가장 주된 이유는?",
+   o:["행렬 곱을 여러 코어로 나눠 병렬 속도를 높이려고","다양한 문맥적 뉘앙스를 여러 관점에서 동시에 학습하려고","긴 문장을 조각내 하나씩 순차 처리하려고","어텐션 스코어가 커져 생기는 기울기 폭발을 막으려고"],
+   a:2, e:"문법·화자·시점 등 한 문장 안의 여러 관점을 다각도로 파악하기 위해 멀티 헤드를 쓴다."},
+  {n:13, q:"DDPM 역방향에서 로그 우도 대신 ELBO를 쓰는 근본 이유는?",
+   o:["연쇄 확률 구조가 복잡해 실제 로그 우도를 직접 계산(Intractable)할 수 없어서","차원을 1차원으로 축소해 속도를 높이려고","마르코프 체인 없이 한 스텝으로 생성하려고","손실을 BCE로 쉽게 변환하려고"],
+   a:1, e:"실제 로그 우도는 연쇄 확률 탓에 직접 계산 불가라, 유사 추세인 ELBO(VLB)를 최대화한다."},
+  {n:14, q:"Occlusion Sensitivity에서 패치 크기 설정 설명으로 옳은 것은?",
+   o:["크게 잡을수록 세밀한 근거를 얻는다.","너무 크면 어떤 부위가 중요한지 알기 어렵고 두루뭉술해진다.","1픽셀로 잡으면 연산이 가장 빠르다.","크기는 내부 가중치 행렬 크기에 맞춰 자동 고정된다."],
+   a:2, e:"패치가 너무 크면 근거 파악이 부정확, 너무 작으면 연산량 급증이라 적절한 조절이 필요."},
+  {n:15, q:"MAML 데이터 처리 설명 중 잘못된 것은?",
+   o:["서포트 셋은 태스크에 빠르게 적응하는 '모의고사'다.","쿼리 셋은 갱신된 성능을 평가하는 '실전 시험'이다.","평가 시 서포트 셋과 쿼리 셋은 완전히 동일한 데이터를 써야 한다.","적은 데이터(Few-shot)로 새 환경에 적응할 초기 가중치 최적점을 찾는다."],
+   a:3, e:"둘이 같으면 단순 암기가 되므로 반드시 다른 데이터로 구성해야 일반화 능력이 길러진다."},
+  {n:16, q:"GAN 판별자의 올바른 학습 방향은?",
+   o:["진짜는 0, 가짜는 1에 가깝게 출력하도록 갱신한다.","진짜는 1(True), 가짜는 0(False)에 가깝게 출력하도록 갱신한다.","진짜·가짜 모두 0.5를 출력해 혼란을 유도한다.","판별자가 스스로 노이즈를 더해 해상도를 맞춘다."],
+   a:2, e:"판별자는 경찰 역할로 진짜는 1, 가짜는 0으로 철저히 판별하도록 학습한다."},
+  {n:17, q:"앞 모델의 오차를 다음 모델이 순차적으로 보완하며 학습하는 앙상블 기법은?",
+   o:["보팅(Voting)","배깅(Bagging)","부스팅(Boosting)","디시전 트리"],
+   a:3, e:"순차적으로 약점을 보완하며 가중치를 갱신하는 기법으로, 에이다부스트 등이 속하는 부스팅."},
+  {n:18, q:"무작위 노이즈 샘플링으로 끊긴 역전파를 미분 가능하게 만드는 기법은?",
+   o:["코사인 유사도","리파라미터라이제이션 트릭","글로벌 에버리지 풀링(GAP)","교차 검증"],
+   a:2, e:"노이즈 성분과 파라미터(평균·분산) 성분을 분리해 역전파를 가능케 하는 VAE·DDPM의 핵심 트릭."},
+  {n:19, q:"CFG(Classifier-Free Guidance) 설명으로 알맞은 것은?",
+   o:["외부 분류기를 반드시 추가로 연결해야 한다.","분류기 없이 조건·무조건 예측을 혼합·증폭해 조건 반영 강도를 조절한다.","역과정 타임스텝을 한 번에 스킵해 속도를 높인다.","특정 영역을 마스킹해 다음 단어를 예측한다."],
+   a:2, e:"별도 분류 모델 없이 조건부·비조건부 출력의 차이를 활용해 프롬프트 반영도를 끌어올린다."},
+  {n:20, q:"초거대 AI가 인간 가치·의도·윤리에 어긋나지 않게 제어·설계하는 장치의 필요성을 가리키는 용어는?",
+   o:["차원의 저주","AI 정렬 및 안전 장치(AI Alignment/Safety)","다중 태스크 학습","클래스 불균형"],
+   a:2, e:"AI의 목표·행동이 인간의 도덕·의도와 어긋나지 않게 정렬하는 것은 AGI/ASI 시대의 필수 과제."},
+]},
 
-        <div class="question-card">
-            <div class="question-title">5. 최근 널리 쓰이는 LDM(Latent Diffusion Model)이 기존의 기본 DDPM과 구별되는 가장 큰 핵심 원리는 무엇인가요?</div>
-            <ul class="options">
-                <li>1. 픽셀(Pixel) 공간이 아닌, 오토인코더(VAE)를 통해 축소된 잠재 공간(Latent Space) 안에서 노이즈 주입 및 제거 과정을 수행한다.</li>
-                <li>2. 노이즈를 추가하는 전방 과정을 완전히 생략하여 생성 속도를 수천 배 높였다.</li>
-                <li>3. 이미지 생성을 포기하고, 오직 텍스트 문장만을 생성하도록 트랜스포머 구조로 완전히 대체되었다.</li>
-                <li>4. 한 스텝(One-step) 만에 가우시안 노이즈에서 완벽한 이미지를 생성해내는 수학적 증명을 적용했다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('1-5')">정답 및 해설 보기</button>
-            <div id="ans-1-5" class="answer-section">
-                <strong>정답: 1</strong><br>
-                해설: 픽셀 공간 전체 연산은 비용이 크므로 데이터를 VAE를 통해 압축한 뒤 잠재 공간에서 디퓨전 과정을 수행하는 것이 핵심입니다.
-            </div>
-        </div>
+{ id:"s3", title:"3회차 모의고사", badge:"심화", desc:"메타러닝 심화 · 확률적 개념", q:[
+  {n:21, q:"메타 러닝의 핵심 학습 목표를 나타내는 학술 용어는?",
+   o:["학습하는 방법을 학습(Learning to Learn)","차원 축소","순차적 변환(Seq2Seq)","적대적 학습"],
+   a:1, e:"하나의 태스크 해결이 아니라 '새 지식을 빠르게 습득하는 방법' 자체를 터득하는 게 목표."},
+  {n:22, q:"CAM 적용을 위해 반드시 선행돼야 하는 모델 구조적 조건은?",
+   o:["모든 활성화 함수를 시그모이드로 바꿔야 한다.","구조 변경 없이 역전파 기울기만 있으면 된다.","합성곱 층 마지막에 전역 평균 풀링(GAP) 층을 연결해야 한다.","입력을 흑백 채널로 축소해야 한다."],
+   a:3, e:"초기 CAM은 피처 맵 평균을 위해 GAP 층이 필수라 기존 레이어 구조를 수정해야 했다."},
+  {n:23, q:"디코더가 미래 단어를 미리 보는 '컨닝'을 막는 기법은?",
+   o:["포지셔널 인코딩","크로스 어텐션","마스크드 멀티 헤드 어텐션","피드 포워드 네트워크"],
+   a:3, e:"자기회귀 생성이므로 어텐션 행렬에서 자신보다 뒤 단어를 마스킹해 컨닝을 차단."},
+  {n:24, q:"DDPM 전방 과정에서 매 스텝 주입되는 노이즈 양을 통제하는 상수 \\(\\beta_t\\)의 역할을 부르는 용어는?",
+   o:["노이즈 스케줄(Noise Schedule)","러닝 레이트","어텐션 스코어","리파라미터라이제이션 트릭"],
+   a:1, e:"정해진 스텝에 걸쳐 이미지를 파괴하도록 단계별 주입 노이즈 크기(분산)를 정량 계획한 것."},
+  {n:25, q:"GAN 생성자가 가짜 데이터를 만들 때 가장 처음 입력받는 재료는?",
+   o:["원본 픽셀 이미지","판별자의 내부 가중치","정답 텍스트 라벨","랜덤 노이즈 벡터(Z)"],
+   a:4, e:"생성자는 잠재 공간의 무작위 노이즈(z)만 입력받아 유의미한 이미지로 빚어낸다."},
+  {n:26, q:"오토인코더 잠재 공간의 노드 크기 설계 방법으로 알맞은 것은?",
+   o:["입력 차원보다 크게 해야 정보 손실을 완전히 막는다.","입력 차원과 똑같이 해야 완벽 복원이 된다.","입력 차원보다 작게 해 핵심·압축 특징만 남기도록 강제한다.","노드 크기와 차원 축소는 무관하고 활성화 함수로 결정된다."],
+   a:3, e:"병목(Bottleneck)을 만들어 차원을 줄여야 노이즈를 버리고 중요한 표현만 학습한다."},
+  {n:27, q:"KL 다이버전스가 궁극적으로 측정하려는 것은?",
+   o:["두 이미지 픽셀값의 평균적 물리적 거리","전방 과정 분포와 역방향 과정 분포 간의 차이(유사도)","단어 벡터 사이의 방향적 연관성(각도)","데이터셋에서 노이즈가 차지하는 절대 용량"],
+   a:2, e:"두 분포(q·p)가 얼마나 다른지 측정하며, 0에 가까울수록 분포가 일치해 생성을 잘한 것."},
+  {n:28, q:"MAML의 \\(\\theta\\)와 \\(\\phi\\)를 바르게 짝지은 것은?",
+   o:["\\(\\theta\\)는 국소 가중치, \\(\\phi\\)는 메타 트레이닝된 범용 가중치","둘 다 데이터 증강에만 관여하는 파라미터","\\(\\theta\\)는 빠르게 적응하는 초기 베이스 가중치, \\(\\phi\\)는 태스크에 적응한 가중치","\\(\\theta\\)는 인코더, \\(\\phi\\)는 디코더 파라미터"],
+   a:3, e:"\\(\\theta\\)는 전역 메타 파라미터(평소의 나), \\(\\phi\\)는 특정 태스크를 흡수한 태스크 특화 파라미터."},
+  {n:29, q:"CFG 수식에서 조건 가중치(w)를 매우 크게 했을 때 나타나는 결과는?",
+   o:["무조건 생성 결과 비중이 100%가 된다.","프롬프트에 훨씬 강하게 부합하지만 다양성은 다소 줄 수 있다.","전방 과정 스텝 수가 기하급수적으로 늘어난다.","이미지 대신 텍스트 문장만 반환한다."],
+   a:2, e:"w가 커질수록 텍스트 조건(c)을 극단적으로 따라 지시어에 충실한 이미지가 생성된다."},
+  {n:30, q:"RNN 기반 Seq2Seq가 긴 문장에서 성능이 급락한 구조적 한계는?",
+   o:["순서를 전혀 못 파악해 앞뒤 문맥이 뒤섞인다.","아무리 긴 입력도 하나의 고정 크기 은닉 상태(Context Vector)로 압축해 정보 손실이 난다.","디코더가 인코더의 모든 시점을 한꺼번에 참조해 연산이 폭발한다.","시그모이드만 써서 항상 기울기 폭발이 난다."],
+   a:2, e:"인코더 마지막 은닉 상태 하나에 전체 정보를 구겨 넣어야 하는 병목 현상이 있었다."},
+]},
 
-        <div class="question-card">
-            <div class="question-title">6. 설명 가능한 AI(XAI) 기법 중 하나인 Grad-CAM이 기존 CAM과 비교했을 때 가지는 가장 큰 장점은 무엇인가요?</div>
-            <ul class="options">
-                <li>1. 이미지의 일부 영역을 실제로 검은색 패치로 가리면서 결과를 비교하므로 직관적이다.</li>
-                <li>2. Global Average Pooling(GAP) 레이어를 끼워 넣는 등 모델의 구조를 변경할 필요 없이, 기울기(Gradient)를 이용해 바로 적용할 수 있다.</li>
-                <li>3. 연산량이 10배 이상 줄어들어 실시간 객체 인식 및 분할에 바로 활용할 수 있다.</li>
-                <li>4. CNN 계열 모델뿐만 아니라 의사결정 트리(Decision Tree), SVM 등 모든 알고리즘에 적용할 수 있다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('1-6')">정답 및 해설 보기</button>
-            <div id="ans-1-6" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: CAM은 모델 구조 변경(GAP 레이어 삽입 등)이 필요하지만 Grad-CAM은 역전파되는 기울기를 활용하여 구조 변경 없이 적용 가능합니다.
-            </div>
-        </div>
+{ id:"s4", title:"4회차 모의고사", badge:"구조·변천사", desc:"상세 구조 · 모델 변천사", q:[
+  {n:31, q:"디코더가 인코더 출력(K,V)을 가져와 자신의 Q와 매칭하는 어텐션은?",
+   o:["셀프 어텐션","크로스 어텐션","마스크드 셀프 어텐션","스파스 어텐션"],
+   a:2, e:"디코더 Q와 인코더 K·V를 교차 연산해 정답 생성 시 원문 정보를 참고하게 만드는 연산."},
+  {n:32, q:"GAN 학습이 이상적으로 끝나 판별자가 진짜·가짜를 못 구별할 때 출력 확률은?",
+   o:["0","1","0.5","-1"],
+   a:3, e:"가짜가 실제와 완전히 같은 분포가 되면 판별자는 확신할 수 없어 0.5를 출력한다."},
+  {n:33, q:"\\(x_T\\)에서 시작해 노이즈를 제거하며 원본을 복원하는 역방향 과정을 나타내는 기호는?",
+   o:["q-process","p-process","KL-process","z-process"],
+   a:2, e:"망가뜨리는 과정이 q, 학습으로 노이즈를 걷어내 회복하는 샘플링 과정이 p-process."},
+  {n:34, q:"메타 러닝에서 새 클래스 적응용으로 제공되는 소량의 정답 학습 데이터셋은?",
+   o:["서포트 셋","쿼리 셋","메타 트레인 셋","잠재 변수 셋"],
+   a:1, e:"새 태스크의 힌트·모의고사 격으로 제공되는 소량(Few-shot)의 훈련 데이터 집합."},
+  {n:35, q:"CAM과 Grad-CAM 비교로 가장 옳은 것은?",
+   o:["둘 다 검은 사각형으로 가려보는 블랙박스 접근법이다.","Grad-CAM은 구조 변경 없이 역전파 기울기로 중요도를 산출한다.","CAM은 빠르지만 Grad-CAM은 100배 이상 느리다.","Grad-CAM은 완전연결층 가중치 시각화에만 특화돼 있다."],
+   a:2, e:"GAP 추가가 필요했던 CAM의 단점을 극복하고, 기울기로 범용적으로 활성화 맵을 그린다."},
+  {n:36, q:"Occlusion Sensitivity의 구조적 단점으로 알맞은 것은?",
+   o:["모든 레이어를 GAP로 바꿔야 작동한다.","패치로 가리며 이동해 매번 예측을 다시 해야 하므로 연산 비용이 높다.","NLP에서는 전혀 못 쓴다.","기울기 소실이 100% 발생한다."],
+   a:2, e:"패치를 옮기며 수많은 추론을 반복해야 해, 한 번의 전/역전파로 끝나는 Grad-CAM보다 무겁다."},
+  {n:37, q:"트랜스포머 서브 레이어에서 비선형성을 부여해 표현력을 높이는 요소는?",
+   o:["피드 포워드 네트워크(FFN)","레이어 정규화","잔차 연결","소프트맥스"],
+   a:1, e:"어텐션 결과(선형 결합)에 위치별 MLP 형태의 FFN을 적용해 비선형성을 더한다."},
+  {n:38, q:"LSTM 파라미터를 줄이고 셀 상태와 은닉 상태를 통합해 간소화한 모델은?",
+   o:["Seq2Seq","GRU","VGG-16","오토인코더"],
+   a:2, e:"GRU는 게이트를 둘(Reset·Update)로 줄이고 Cell State를 없애 Hidden State만으로 기억을 관리."},
+  {n:39, q:"인간처럼 스스로 목적을 세우고 메타 러닝으로 창의적으로 해결하는 범용 지능은?",
+   o:["ASI","AGI","LLM","XAI"],
+   a:2, e:"인간 수준의 범용 학습 능력·자율 문제 해결·창의적 사고를 갖춘 범용 인공지능."},
+  {n:40, q:"LDM에서 텍스트 프롬프트 조건을 U-Net 디노이징에 주입하는 핵심 메커니즘은?",
+   o:["크로스 어텐션","오클루전","잔차 블록","맥스 풀링"],
+   a:1, e:"U-Net 중간중간에 텍스트 임베딩과 이미지 잠재 변수를 매칭하는 크로스 어텐션 레이어가 배치된다."},
+]},
 
-        <div class="question-card">
-            <div class="question-title">7. XAI 기법 중 '가림 민감도(Occlusion Sensitivity)' 방식에 대한 설명으로 가장 적절한 것은?</div>
-            <ul class="options">
-                <li>1. 입력 이미지의 특정 영역을 패치로 가렸을 때 예측 확률이 얼마나 하락하는지를 측정하여 중요도를 파악한다.</li>
-                <li>2. 모델 내부의 가중치 행렬 값을 직접 분석하여 가장 활성화된 뉴런을 시각화한다.</li>
-                <li>3. 이미지에 노이즈를 점진적으로 추가해가며 원본 형태가 사라지는 시점을 측정한다.</li>
-                <li>4. 생성 모델이 만든 가짜 이미지가 실제 이미지와 픽셀 단위로 얼마나 차이나는지를 측정한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('1-7')">정답 및 해설 보기</button>
-            <div id="ans-1-7" class="answer-section">
-                <strong>정답: 1</strong><br>
-                해설: 가렸을 때 판단 확률이 떨어지는 영역이 곧 판단을 내리는 핵심 근거라는 블랙박스 접근법입니다.
-            </div>
-        </div>
+{ id:"s5", title:"실제 기출 족보", badge:"기출 20문제", desc:"PDF 텍스트 기반으로 복원된 기출문제", q:[
+  {n:1, q:"오토인코더(AE) 설명 중 올바른 것은?",
+   o:["입력 데이터의 특징을 효율적으로 담아낸 이미지를 만든다.","GAN과 달리 실제 존재하는 이미지를 생성한다.","학습 데이터가 충분한 분야에서 주로 쓴다.","AE 학습은 GAN 학습보다 훨씬 어렵다."],
+   a:1, e:"데이터 압축·특징 추출."},
+  {n:2, q:"다음 수식과 가장 관련 깊은 방법은?<br>$$H(x)=\\alpha_{1}h_{1}(x)+\\alpha_{2}h_{2}(x)+\\dots+\\alpha_{t}h_{t}(x)=\\sum_{t=1}^{T}\\alpha_{t}h_{t}(x)$$",
+   o:["T-Accumulating Discriminant","Bagging","RBF kernel","Boosting"],
+   a:4, e:"각 모델 h(x)에 가중치 \\(\\alpha\\)를 곱해 순차적으로 합산하는 부스팅 수식."},
+  {n:3, q:"빈칸 (A)에 가장 적합한 것은?<pre class='code'>clf1 = AdaBoostClassifier()\nclf2 = RandomForestClassifier()\nclf3 = SVC(kernel='linear')\nclassifier = (A)(estimators=[('lr', clf1), ('rf', clf2), ('gnb', clf3)])\nclassifier.fit(X_train, y_train)</pre>",
+   o:["VotingClassifier","BaggingClassifier","RandomForestClassifier","KNeighborsClassifier"],
+   a:1, e:"각기 다른 여러 모델을 합쳐 앙상블하는 방법은 Voting."},
+  {n:4, q:"LSTM 임시 cell state 내용 중 상관 없는 것은?",
+   o:["수식적으로 일반 RNN의 hidden state 계산과 유사하다.","현재 입력값과 과거 hidden state 정보를 요약해 계산한다.","게이트 연산을 통해 최종 cell state로 구성된다.","최종 cell state는 0~1 사이 값으로 제한된다."],
+   a:4, e:"Cell state 자체가 0~1로 제한되는 게 아니라, 통과하는 게이트의 활성화 함수(시그모이드)가 0~1 값."},
+  {n:5, q:"MAML 그림에서 \\(\\phi\\)의 역할로 옳은 것은? <em>(이미지 생략)</em>",
+   o:["고정된 메타 파라미터 아래 지원 집합 D로 과제별 특화 파라미터를 최적화한 값","모든 과제에 공통으로 학습된 전역 파라미터","테스트 단계에서 쿼리 데이터에 맞춰 추가 최적화되는 파라미터","D는 테스트 시 성능 검증용 쿼리 집합을 의미"],
+   a:1, e:"특정 태스크에 맞춰 적응된 파라미터 \\(\\phi\\)를 의미한다."},
+  {n:6, q:"LDM(Stable Diffusion) 그림에서 좌우 (A)~(D)의 올바른 짝은? <em>(이미지 생략)</em>",
+   o:["왼편 (D) — 오른쪽 (C)","왼편 (A) — 오른쪽 (C)","왼편 (B) — 오른쪽 (D)","왼편 (C) — 오른쪽 (B)"],
+   a:0, e:"이미지가 없어 명확한 판별 불가. 통상 Encoder/Decoder와 Diffusion Process 매핑을 의미한다.",
+   note:"※ 원본 이미지가 없어 정답 확정 불가"},
+  {n:7, q:"Occlusion Sensitivity 설명으로 옳지 않은 것은?",
+   o:["평균값(GAP)을 이용한다.","마스크(Mask) 방식을 이용한다.","일부를 가려 가장 중요한 부분을 판별한다.","수업에서 설명한 라이브러리는 tf-explain이다."],
+   a:1, e:"GAP는 CAM 방식에서 사용한다."},
+  {n:8, q:"DCGAN 설명으로 올바르지 않은 것은?",
+   o:["옵티마이저 최적화·컴파일 과정이 없다.","풀링 대신 패딩 과정이 포함된다.","생성자가 가짜 이미지를 만들 때 컨볼루션 신경망을 쓴다.","학습 데이터를 늘려주는 효과를 위해 쓴다."],
+   a:1, e:"GAN도 생성자·판별자를 번갈아 최적화(Optimizer)하는 과정이 분명히 존재한다."},
+  {n:9, q:"이동 평균법(moving average) 설명 중 가장 올바른 것은?",
+   o:["가중이동평균에서 모든 데이터의 가중치는 동일하다.","누적이동평균은 현재까지 균등 가중된 값들의 평균이다.","단순이동평균은 이전 n개의 가중 평균이다.","지수이동평균은 오래된 데이터의 가중치가 점차 증가한다."],
+   a:2, e:"1은 단순, 3은 가중, 4는 반대(오래될수록 감소) 설명."},
+  {n:10, q:"GAN에서 fake에 대한 판별자 D()의 손실 함수로 정의될 수 있는 것은?",
+   o:["-log D(x)","log D(x)","-log(1-D(x))","log(1-D(x))"],
+   a:4, e:"일반 Value 함수에서는 \\(\\log(1-D(G(z)))\\) 형태. 최적화 방향에 따라 부호가 붙어 3번도 가능."},
+  {n:11, q:"CFG 수식 설명 중 가장 거리가 먼 것은?<br>$$\\nabla_{x}\\log p_{\\gamma}(x|y)=(1-\\gamma)\\nabla_{x}\\log p(x)+\\gamma\\nabla_{x}\\log p(x|y)$$",
+   o:["조건 없는 예측을 보정해 조건 결과 확률을 강화하는 구조다.","w(γ)가 클수록 조건 정보에 대한 강조가 강해진다.","라벨 분포 기반으로 softmax를 조절해 조건 생성 품질을 높인다.","조건 없는 예측도 함께 학습해 조건 없이도 생성 가능하다."],
+   a:3, e:"CFG는 softmax 조절이 아니라 예측 노이즈 벡터들을 선형 결합(보간)해 방향을 트는 방식."},
+  {n:12, q:"Attention Score를 만드는 방법에 해당하지 않는 것은?",
+   o:["벡터의 내적","코사인 유사도","유클리디언 디스턴스","하이퍼볼릭 탄젠트"],
+   a:3, e:"주로 내적·코사인 유사도 같은 방향성/유사도 기반 측정을 쓴다."},
+  {n:13, q:"RNN의 many-to-one 구조 설명으로 옳은 것은?",
+   o:["영어 문장을 한글로 번역","문장에서 각 단어의 품사를 예측(POS 태깅)","여러 시점 다변량 센서 데이터로 특정 시점 제품 상태 확인","이미지로 캡션을 생성하는 이미지 캡셔닝"],
+   a:3, e:"여러 시점(Many)의 데이터로 하나의 결론(One)을 내는 분류 형태."},
+  {n:14, q:"Classifier Guidance(CG) 설명으로 옳지 않은 것은? <em>(이미지 생략)</em>",
+   o:["기존 pre-trained model을 사용할 수 없다.","모든 noise level마다 독자적으로 학습된 Classifier가 필요하다.","Classifier가 noisy 이미지를 구별해 적절한 gradient를 만든다.","모든 time step에 대해 수행할 필요는 없다."],
+   a:4, e:"CG는 노이즈가 있는 모든 타임스텝에 대응하는 분류기가 필요해 비용이 높다."},
+  {n:15, q:"DDPM Reverse Process 수식에서 Reconstruction Term은?<br>$$\\min \\mathbb{E}_{q}\\big[\\underbrace{D_{KL}(q(x_{T}|x_{0})\\,\\|\\,p(x_{T}))}_{1} + \\sum_{t>1}\\underbrace{D_{KL}(q(x_{t-1}|x_{t},x_{0})\\,\\|\\,p_{\\theta}(x_{t-1}|x_{t}))}_{2} \\underbrace{-\\log p_{\\theta}(x_{0}|x_{1})}_{3}\\big]$$",
+   o:["1번항","2번항","3번항","(보기 없음)"],
+   a:3, e:"마지막 스텝 \\(x_1\\)에서 원본 \\(x_0\\)를 복원(Reconstruction)하는 항."},
+  {n:16, q:"메타 러닝 수식 관련 설명 중 가장 거리가 먼 것은?<br>\\(\\phi^{*}=\\arg\\max_{\\phi}\\log p(\\phi|D)=\\arg\\max_{\\phi}\\log p(D|\\phi)+\\log p(\\phi)\\)",
+   o:["p(φ|D)는 D가 주어졌을 때 파라미터의 사후 확률이다.","log p(D|φ)는 likelihood다.","k가 커질수록 감독학습이 안 되는 게 메타 러닝의 등장 배경이다.","argmax는 φ를 바꿔 최대값을 주는 φ*를 찾는 것이다."],
+   a:3, e:"k가 '작을수록(데이터가 적을수록)' 딥러닝이 안 되는 Few-Shot 한계가 메타 러닝의 등장 배경."},
+  {n:17, q:"GAN 손실이 BCE 기반이라는 설명 중 옳지 않은 것은?",
+   o:["정답에 수렴하는 정확도가 중요해 이진 방법을 쓴다.","진짜/가짜 판별이라 이진이 적당하다.","진짜 데이터면 판별자 출력이 1이어야 한다.","가짜의 경우 앞 항 \\(y_i\\log p(y_i)\\)은 0이 된다."],
+   a:1, e:"GAN은 정답 수렴보다 생성자·판별자의 균형(내시 균형)을 찾는 게 핵심."},
+  {n:18, q:"seq2seq 구조의 한계점 설명으로 옳은 것은?",
+   o:["디코더가 문장을 예측할 때 인코더 마지막 은닉층만 활용","인코더가 문장을 예측할 때 디코더 마지막 은닉층만 활용","디코더가 단어를 예측할 때 인코더 마지막 시점 은닉층만 활용","인코더가 단어를 예측할 때 디코더 마지막 시점 은닉층만 활용"],
+   a:3, e:"디코더가 출력 단어를 낼 때 인코더의 마지막 은닉 상태(Context Vector) 하나에만 의존하는 병목."},
+  {n:19, q:"Occlusion Sensitivity 프로그램 파라미터 설명 중 옳지 않은 것은?<pre class='code'>explainer = OcclusionSensitivity()\noutput = explainer.explain((A), (B), (C), (D))</pre>",
+   o:["(A)~(D) 중 하나로 학습률을 설정한다.","(A)~(D) 중 하나로 데이터를 입력으로 설정한다.","패치를 크게 잡으면 더 넓은 범위 결과가 나온다.","모델과 클래스를 정의할 수 있다."],
+   a:1, e:"추론 기반 블랙박스 방식이라 학습(학습률)을 진행하지 않는다."},
+  {n:20, q:"GRU 구조 내용 중 상관 없는 것은? <em>(이미지 생략)</em>",
+   o:["LSTM의 output gate를 없앤 대신 reset gate를 만들었다.","LSTM의 forget gate와 output gate를 update gate로 통합했다.","LSTM의 파라미터 개수를 줄인 모델이다.","LSTM의 cell state와 hidden state를 hidden state로 통합했다."],
+   a:2, e:"GRU는 Forget Gate와 Input Gate를 결합해 Update Gate를 만든다."},
+]},
+];
 
-        <div class="question-card">
-            <div class="question-title">8. 메타 러닝 알고리즘 MAML에서 'Inner Loop'와 'Outer Loop'의 역할로 가장 알맞은 것은?</div>
-            <ul class="options">
-                <li>1. Inner Loop는 메타 파라미터를 갱신하고, Outer Loop는 특정 태스크에 맞춘 초기화 값을 찾는다.</li>
-                <li>2. Inner Loop는 서포트 셋을 이용해 특정 태스크에 빠르게 적응하고, Outer Loop는 쿼리 셋에서의 손실을 바탕으로 메타 파라미터를 업데이트한다.</li>
-                <li>3. Inner Loop와 Outer Loop 모두 동일한 데이터를 사용하여 파라미터를 두 번 연속 업데이트한다.</li>
-                <li>4. Inner Loop는 생성자를 학습하고, Outer Loop는 판별자를 학습한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('1-8')">정답 및 해설 보기</button>
-            <div id="ans-1-8" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: Inner Loop는 모의고사(Support)로 특정 지식에 적응, Outer Loop는 실전(Query)을 통해 학습하는 근본 능력(Meta Parameter) 갱신입니다.
-            </div>
-        </div>
+const main = document.getElementById('main');
+data.forEach(sec=>{
+  const s = document.createElement('section');
+  s.id = sec.id;
+  s.setAttribute('aria-labelledby', sec.id+'-h');
+  let html = `<h2 id="${sec.id}-h">${sec.title}<span class="badge">${sec.badge}</span></h2>`;
+  html += `<p class="sec-desc">${sec.desc}</p>`;
+  sec.q.forEach(item=>{
+    const opts = item.o.map((t,i)=>`<li${i===item.a-1?' class="is-answer"':''}>${t}</li>`).join('');
+    const noteHtml = item.note?`<p class="note">${item.note}</p>`:'';
+    const ansLabel = item.a>0?`정답 ${item.a}번`:'정답 확인 필요';
+    html += `
+    <article class="q">
+      <div class="qhead">
+        <span class="qnum">${item.n}</span>
+        <p class="qtext">${item.q}</p>
+      </div>
+      ${noteHtml}
+      <ol class="opts">${opts}</ol>
+      <details class="ans">
+        <summary>정답 및 해설</summary>
+        <div class="body"><span class="a-label">${ansLabel}</span>${item.e}</div>
+      </details>
+    </article>`;
+  });
+  s.innerHTML = html;
+  main.appendChild(s);
+});
 
-        <div class="question-card">
-            <div class="question-title">9. 범용 인공지능(AGI)이 기존의 인공지능(ANI)과 구별되는 가장 핵심적인 특징은?</div>
-            <ul class="options">
-                <li>1. 한 번에 처리할 수 있는 데이터의 양이 단순히 수십 배 늘어난 초거대 모델이다.</li>
-                <li>2. 주어진 고정된 환경 내에서만 최적의 효율을 내도록 설계되었다.</li>
-                <li>3. 인간처럼 여러 환경에서 스스로 문제를 정의하며 '학습하는 방법' 자체를 터득할 수 있다.</li>
-                <li>4. 오직 수치화된 정형 데이터만 처리할 수 있어 예측의 완벽성을 보장한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('1-9')">정답 및 해설 보기</button>
-            <div id="ans-1-9" class="answer-section">
-                <strong>정답: 3</strong><br>
-                해설: AGI는 새로운 환경과 규칙에서도 스스로 메타 러닝을 통해 학습 방법을 터득하고 자율적으로 진화하는 범용적 사고를 수행합니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">10. 오토인코더(Auto-Encoder)의 인코더와 디코더 구조 및 역할에 대한 올바른 설명은?</div>
-            <ul class="options">
-                <li>1. 인코더는 데이터 차원을 축소하여 핵심 특징을 압축하고, 디코더는 이를 바탕으로 원본 데이터를 재구성한다.</li>
-                <li>2. 인코더는 노이즈로부터 가짜 데이터를 생성하고, 디코더는 그 데이터가 진짜인지 판별한다.</li>
-                <li>3. 인코더는 텍스트를 입력받아 이미지를 렌더링하고, 디코더는 생성된 이미지에 캡션을 단다.</li>
-                <li>4. 인코더는 고해상도 이미지를 생성하고, 디코더는 여기에 점진적으로 노이즈를 추가한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('1-10')">정답 및 해설 보기</button>
-            <div id="ans-1-10" class="answer-section">
-                <strong>정답: 1</strong><br>
-                해설: 압축(인코딩) 후 복원(디코딩) 과정을 통해 주요 특징(Latent)을 학습하는 비지도 학습 아키텍처입니다.
-            </div>
-        </div>
-    </section>
-
-    <section id="session-2">
-        <h2>📝 2회차 모의고사 (세부 메커니즘 & 앙상블)</h2>
-        
-        <div class="question-card">
-            <div class="question-title">11. 오토인코더(Auto-Encoder)의 학습 목적과 특성에 대한 설명으로 가장 적절하지 않은 것은?</div>
-            <ul class="options">
-                <li>1. 인코더는 입력 데이터의 차원을 축소하여 잠재 벡터를 추출한다.</li>
-                <li>2. 디코더는 압축된 잠재 벡터를 바탕으로 원본 데이터와 최대한 동일하게 복원한다.</li>
-                <li>3. 주로 지도 학습(Supervised Learning) 방식으로, 사람이 직접 라벨링한 정답 데이터가 대량으로 필요하다.</li>
-                <li>4. 디퓨전 모델 중 LDM은 이 구조(VAE)를 활용하여 데이터를 압축한 후 연산을 수행한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('2-11')">정답 및 해설 보기</button>
-            <div id="ans-2-11" class="answer-section">
-                <strong>정답: 3</strong><br>
-                해설: 오토인코더는 입력 데이터를 정답으로 삼아 복원하는 자가지도(비지도) 학습이므로 별도의 라벨링이 필요 없습니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">12. 트랜스포머 모델에서 '멀티 헤드 어텐션(Multi-Head Attention)'을 사용하는 가장 주된 이유는 무엇인가요?</div>
-            <ul class="options">
-                <li>1. 행렬 곱셈을 단순히 컴퓨터의 여러 코어로 나누어 병렬 처리 속도를 높이기 위함이다.</li>
-                <li>2. 단어들 사이의 다양한 문맥적 뉘앙스를 서로 다른 여러 관점에서 동시에 학습하기 위함이다.</li>
-                <li>3. 문장의 길이가 너무 길 때, 문장을 여러 조각으로 쪼개어 하나씩 순차 처리하기 위함이다.</li>
-                <li>4. 어텐션 스코어가 너무 커져 기울기 폭발이 일어나는 것을 방지하기 위함이다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('2-12')">정답 및 해설 보기</button>
-            <div id="ans-2-12" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: 문법, 화자, 시점 등 한 문장 안에서도 다양한 관점과 뉘앙스가 존재하므로 이를 다각도로 파악하기 위해 멀티 헤드를 사용합니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">13. 디퓨전 모델(DDPM)의 역방향 학습 시 실제 데이터의 로그 우도를 직접 계산하지 않고, ELBO(Evidence Lower Bound)를 대안으로 사용하는 근본적인 이유는?</div>
-            <ul class="options">
-                <li>1. 역방향 과정의 연쇄 확률 구조가 너무 복잡하여 실제 로그 우도를 직접 계산하는 것(Intractable)이 불가능하기 때문이다.</li>
-                <li>2. 데이터 차원을 무조건 1차원으로 축소하여 연산 속도를 높이기 위해서이다.</li>
-                <li>3. 마르코프 체인을 따르지 않고 단 한 번의 스텝으로 이미지를 생성하기 위해서이다.</li>
-                <li>4. 손실 함수를 이진 교차 엔트로피(BCE)로 쉽게 변환하기 위해서이다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('2-13')">정답 및 해설 보기</button>
-            <div id="ans-2-13" class="answer-section">
-                <strong>정답: 1</strong><br>
-                해설: 교수님이 언급하신 대로 실제 로그 우도는 연쇄 확률로 인해 직접 계산할 수 없으므로, 유사한 추세를 보이는 ELBO(VLB)를 계산하여 최대화합니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">14. XAI '폐쇄 민감도(Occlusion Sensitivity)' 방식에서 까만 상자(패치) 크기 설정에 대한 설명으로 옳은 것은?</div>
-            <ul class="options">
-                <li>1. 무조건 크게 잡을수록 구체적이고 세밀한 판단 근거를 얻을 수 있다.</li>
-                <li>2. 너무 크게 잡으면 어떤 특정 부위가 중요한지 구체적으로 알기 어렵고 두리뭉실해진다.</li>
-                <li>3. 가장 작게(1픽셀) 잡으면 연산 속도가 가장 빠르다.</li>
-                <li>4. 크기는 모델 내부 가중치 행렬 크기에 맞추어 자동으로 고정된다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('2-14')">정답 및 해설 보기</button>
-            <div id="ans-2-14" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: 패치 사이즈가 너무 크면 판별 근거를 정밀하게 파악할 수 없고, 너무 작으면 연산량이 급증하므로 적절한 조절이 필요합니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">15. MAML 방식에서 데이터를 다루는 방법에 대한 설명 중 잘못된 것은?</div>
-            <ul class="options">
-                <li>1. 서포트 셋은 특정 태스크에 빠르게 적응하기 위해 사용하는 '모의고사' 역할을 한다.</li>
-                <li>2. 쿼리 셋은 업데이트된 파라미터 성능을 평가하는 '실전 시험' 역할을 한다.</li>
-                <li>3. 범용적 적응 능력을 기르기 위해 평가 시 서포트 셋과 쿼리 셋은 완전히 동일한 데이터를 사용해야 한다.</li>
-                <li>4. 아주 적은 데이터(Few-shot)만으로 새로운 환경에 적응할 수 있는 초기 가중치 최적점을 찾는다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('2-15')">정답 및 해설 보기</button>
-            <div id="ans-2-15" class="answer-section">
-                <strong>정답: 3</strong><br>
-                해설: 서포트 셋(모의고사)과 쿼리 셋(실전)이 같으면 모델이 단순 암기를 하게 되므로 반드시 다른 데이터를 구성해야 일반화 능력을 키웁니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">16. GAN 학습 시 판별자(Discriminator)가 진짜와 가짜 데이터를 구별할 때의 올바른 학습 방향은?</div>
-            <ul class="options">
-                <li>1. 진짜에 대해서는 0, 가짜에 대해서는 1에 가깝게 출력하도록 갱신한다.</li>
-                <li>2. 진짜에 대해서는 1(True), 가짜에 대해서는 0(False)에 가깝게 출력하도록 갱신한다.</li>
-                <li>3. 진짜와 가짜 모두 0.5를 출력하게 하여 혼란을 유도한다.</li>
-                <li>4. 판별자 스스로 노이즈를 추가하여 원본과 해상도를 동일하게 맞춘다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('2-16')">정답 및 해설 보기</button>
-            <div id="ans-2-16" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: 판별자는 경찰 역할로서, 진짜는 1로 가짜는 0으로 철저히 판별하는 능력을 최대화하도록 학습합니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">17. 이전 모델이 맞추지 못한 오차나 가중치를 다음 모델이 순차적으로 보완하며 학습해 나가는 앙상블 기법은?</div>
-            <ul class="options">
-                <li>1. 보팅 (Voting)</li>
-                <li>2. 배깅 (Bagging)</li>
-                <li>3. 부스팅 (Boosting)</li>
-                <li>4. 디시전 트리 (Decision Tree)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('2-17')">정답 및 해설 보기</button>
-            <div id="ans-2-17" class="answer-section">
-                <strong>정답: 3</strong><br>
-                해설: 순차적으로 약점을 보완해 가중치를 업데이트하는 앙상블 기법은 에이다부스트 등을 포함하는 '부스팅'입니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">18. 무작위 노이즈 샘플링으로 인한 역전파(Backpropagation) 단절 문제를 해결하여 미분 가능하게 만드는 기법은?</div>
-            <ul class="options">
-                <li>1. 코사인 유사도</li>
-                <li>2. 리파라미터라이제이션 트릭 (Reparameterization Trick)</li>
-                <li>3. 글로벌 에버리지 풀링 (GAP)</li>
-                <li>4. 교차 검증 (Cross Validation)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('2-18')">정답 및 해설 보기</button>
-            <div id="ans-2-18" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: VAE나 DDPM에서 무작위 노이즈 성분과 파라미터(평균, 분산) 성분을 수학적으로 분리시켜 역전파를 가능하게 해주는 핵심 트릭입니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">19. CFG(Classifier Free Guidance)에 대한 설명으로 가장 알맞은 것은?</div>
-            <ul class="options">
-                <li>1. 외부의 별도 분류기를 반드시 추가로 연결해야 한다.</li>
-                <li>2. 별도 분류기 없이, 조건 예측과 무조건 예측 결과를 혼합 및 증폭하여 조건의 반영 강도를 조절한다.</li>
-                <li>3. 역과정 타임스텝을 한 번에 스킵하여 속도를 높여준다.</li>
-                <li>4. 이미지 특정 영역을 마스킹하여 다음 단어를 예측하게 한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('2-19')">정답 및 해설 보기</button>
-            <div id="ans-2-19" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: 별도의 분류 모델 없이 조건부 출력과 비조건부 출력 간의 차이를 활용해 사용자의 프롬프트 반영도를 끌어올리는 방식입니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">20. 초거대 인공지능이 인간의 가치관, 의도, 윤리에 상충하지 않도록 제어하고 설계하는 장치의 필요성을 지칭하는 용어는?</div>
-            <ul class="options">
-                <li>1. 차원의 저주 (Curse of Dimensionality)</li>
-                <li>2. AI 정렬 및 안전 장치 (AI Alignment / Safety)</li>
-                <li>3. 다중 태스크 학습 (Multi-Task Learning)</li>
-                <li>4. 클래스 불균형 (Class Imbalance)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('2-20')">정답 및 해설 보기</button>
-            <div id="ans-2-20" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: 인공지능의 목표나 행동 규칙이 인간의 도덕적 가치 및 의도와 어긋나지 않도록 정렬(Alignment)시키는 것은 AGI/ASI 시대의 필수 과제입니다.
-            </div>
-        </div>
-    </section>
-
-    <section id="session-3">
-        <h2>📝 3회차 모의고사 (메타러닝 심화 & 확률적 개념)</h2>
-        
-        <div class="question-card">
-            <div class="question-title">21. 메타 러닝(Meta-Learning)의 가장 핵심적인 학습 목표를 나타내는 학술적 용어로 알맞은 것은?</div>
-            <ul class="options">
-                <li>1. 학습하는 방법을 학습 (Learning to Learn)</li>
-                <li>2. 차원 축소 (Dimensionality Reduction)</li>
-                <li>3. 순차적 변환 (Sequence to Sequence)</li>
-                <li>4. 적대적 학습 (Adversarial Training)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('3-21')">정답 및 해설 보기</button>
-            <div id="ans-3-21" class="answer-section">
-                <strong>정답: 1</strong><br>
-                해설: 메타 러닝은 단순히 하나의 태스크를 해결하는 것이 아니라, 여러 경험을 통해 '새로운 지식을 빠르게 습득하는 방법' 자체를 모델이 터득하게 하는 것이 궁극적인 목표입니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">22. XAI 기법 중 CAM(Class Activation Map)을 모델에 적용하기 위해 반드시 선행되어야 하는 '모델 구조적 조건'은 무엇인가요?</div>
-            <ul class="options">
-                <li>1. 모델의 모든 활성화 함수를 시그모이드(Sigmoid)로 변경해야 한다.</li>
-                <li>2. 모델 구조를 전혀 변경할 필요 없이 역전파되는 기울기만 있으면 된다.</li>
-                <li>3. 합성곱(Convolution) 층의 마지막에 전역 평균 풀링(Global Average Pooling, GAP) 층을 반드시 연결해야 한다.</li>
-                <li>4. 입력 이미지를 반드시 흑백(Grayscale) 채널로 축소해야 한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('3-22')">정답 및 해설 보기</button>
-            <div id="ans-3-22" class="answer-section">
-                <strong>정답: 3</strong><br>
-                해설: 초기 CAM 모델은 피처 맵들의 평균을 구하기 위해 GAP 층이 필수적으로 요구되어 기존 모델의 레이어 구조를 수정해야 하는 번거로움이 있었습니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">23. 트랜스포머의 디코더(Decoder) 구조에서, 모델이 문장을 순차적으로 생성할 때 아직 나오지 않은 '미래의 단어'를 미리 보고 예측하는 이른바 '컨닝'을 방지하기 위해 사용하는 기법은?</div>
-            <ul class="options">
-                <li>1. 포지셔널 인코딩 (Positional Encoding)</li>
-                <li>2. 크로스 어텐션 (Cross Attention)</li>
-                <li>3. 마스크드 멀티 헤드 어텐션 (Masked Multi-Head Attention)</li>
-                <li>4. 피드 포워드 네트워크 (Feed Forward Network)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('3-23')">정답 및 해설 보기</button>
-            <div id="ans-3-23" class="answer-section">
-                <strong>정답: 3</strong><br>
-                해설: 디코더는 자기회귀(Auto-regressive) 방식으로 단어를 생성하므로, 어텐션 스코어 행렬에서 자신의 위치보다 뒤에 있는 미래의 단어 정보들을 마스킹하여 컨닝을 차단합니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">24. 디퓨전 모델(DDPM)의 전방 과정에서 매 스텝마다 주입되는 가우시안 노이즈의 양을 일정하게 조절하고 통제하는 상수 파라미터 \(\beta_t\)의 역할을 지칭하는 용어는?</div>
-            <ul class="options">
-                <li>1. 노이즈 스케줄 (Noise Schedule)</li>
-                <li>2. 러닝 레이트 (Learning Rate)</li>
-                <li>3. 어텐션 스코어 (Attention Score)</li>
-                <li>4. 리파라미터라이제이션 트릭 (Reparameterization Trick)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('3-24')">정답 및 해설 보기</button>
-            <div id="ans-3-24" class="answer-section">
-                <strong>정답: 1</strong><br>
-                해설: 정해진 스텝에 걸쳐 완전히 이미지를 파괴하기 위해, 매 단계별로 주입할 노이즈의 크기(분산)를 정량적으로 계획해 둔 것을 의미합니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">25. 적대적 생성 신경망(GAN)에서 생성자(Generator)가 완전히 새로운 가짜 데이터(Fake Data)를 만들어내기 위해 가장 처음에 입력받는 재료는 무엇인가요?</div>
-            <ul class="options">
-                <li>1. 원본 픽셀 이미지 (Ground Truth Image)</li>
-                <li>2. 판별자의 내부 가중치 (Discriminator's Weight)</li>
-                <li>3. 정답 텍스트 라벨 (Label)</li>
-                <li>4. 랜덤 노이즈 벡터 (Random Noise Vector, Z)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('3-25')">정답 및 해설 보기</button>
-            <div id="ans-3-25" class="answer-section">
-                <strong>정답: 4</strong><br>
-                해설: 생성자는 오직 잠재 공간에서 추출한 무작위 노이즈 값(z)만을 입력받아, 이를 유의미한 이미지 형태로 빚어내는 역할을 합니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">26. 오토인코더(AE)를 활용하여 데이터의 차원을 축소하거나 노이즈를 제거할 때, 인코더를 통과한 '잠재 공간(Latent Space)'의 노드 크기 설계 방법으로 알맞은 것은?</div>
-            <ul class="options">
-                <li>1. 입력 데이터의 차원보다 크게 설정해야 정보의 손실을 완전히 막을 수 있다.</li>
-                <li>2. 입력 데이터의 차원과 완전히 똑같이 설정해야 원본을 완벽히 복원할 수 있다.</li>
-                <li>3. 입력 데이터의 차원보다 작게 설정하여, 데이터의 가장 핵심적이고 압축된 특징(DNA)만 남기도록 강제해야 한다.</li>
-                <li>4. 노드 크기와 차원 축소는 전혀 관련이 없으며 활성화 함수에 따라 결정된다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('3-26')">정답 및 해설 보기</button>
-            <div id="ans-3-26" class="answer-section">
-                <strong>정답: 3</strong><br>
-                해설: 병목(Bottleneck) 현상을 인위적으로 만들어 차원을 축소시켜야만 모델이 불필요한 노이즈를 버리고 가장 중요한 특징 표현만 학습하게 됩니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">27. 디퓨전 모델 등에서 자주 등장하는 'KL 다이버전스(KL Divergence)'가 궁극적으로 측정하고자 하는 것은 무엇인가요?</div>
-            <ul class="options">
-                <li>1. 입력된 두 이미지의 픽셀값들이 평균적으로 얼마나 떨어져 있는지 나타내는 물리적 거리</li>
-                <li>2. 망가뜨린 후의 전방 과정 확률 분포와, 복원하는 역방향 과정의 확률 분포 간의 '차이(유사도)'</li>
-                <li>3. 단어와 단어 벡터 사이의 방향적 연관성을 나타내는 각도</li>
-                <li>4. 전체 데이터 셋에서 노이즈가 차지하는 절대적인 용량</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('3-27')">정답 및 해설 보기</button>
-            <div id="ans-3-27" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: 두 분포(q 프로세스와 p 프로세스)가 얼마나 다른지를 측정하며, 이 값이 0에 가까울수록 분포가 일치하여 생성을 매우 잘한 것입니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">28. 메타 러닝 MAML에서 사용되는 파라미터 \(\theta\)(세타)와 \(\phi\)(파이)의 의미를 바르게 짝지은 것은?</div>
-            <ul class="options">
-                <li>1. \(\theta\)는 국소적 가중치, \(\phi\)는 메타 트레이닝을 거친 훌륭한 범용 가중치이다.</li>
-                <li>2. \(\theta\)와 \(\phi\) 모두 데이터 증강(Data Augmentation)에만 관여하는 파라미터이다.</li>
-                <li>3. \(\theta\)는 빠르게 적응할 수 있는 '초기 베이스 가중치', \(\phi\)는 서포트 셋을 통해 특정 태스크에 맞춰 업데이트된 '적응형 가중치'이다.</li>
-                <li>4. \(\theta\)는 인코더의 파라미터, \(\phi\)는 디코더의 파라미터이다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('3-28')">정답 및 해설 보기</button>
-            <div id="ans-3-28" class="answer-section">
-                <strong>정답: 3</strong><br>
-                해설: \(\theta\)는 평소의 훌륭한 '나(전역 메타 파라미터)', \(\phi\)는 특정 지식(태스크)을 흡수하여 도사가 된 상태(태스크 특화 파라미터)입니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">29. 디퓨전 모델의 CFG(Classifier Free Guidance) 수식에서 조건 정보(c)에 대한 가중치(w)를 매우 크게 조절했을 때 나타날 수 있는 결과로 가장 알맞은 것은?</div>
-            <ul class="options">
-                <li>1. 조건 없는 (Unconditional) 생성 결과의 비중이 100%가 된다.</li>
-                <li>2. 입력한 프롬프트(텍스트 조건)에 훨씬 강하게 부합하는 이미지가 생성되지만, 다양성은 다소 줄어들 수 있다.</li>
-                <li>3. 전방 과정(Forward Process)의 스텝 수가 기하급수적으로 늘어난다.</li>
-                <li>4. 모델이 이미지를 생성하지 않고 텍스트 문장만을 반환하게 된다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('3-29')">정답 및 해설 보기</button>
-            <div id="ans-3-29" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: CFG의 w 값이 커질수록 모델은 사용자가 제시한 텍스트 조건(c)을 극단적으로 따르려 하므로 지시어에 아주 충실한 이미지가 생성됩니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">30. 트랜스포머 이전, 기존 RNN 기반의 Seq2Seq 모델이 긴 문장 번역에서 성능이 급격히 저하되었던 '구조적인 한계점'을 가장 잘 설명한 것은?</div>
-            <ul class="options">
-                <li>1. 데이터의 순서를 전혀 파악하지 못해 단어의 앞뒤 문맥이 뒤섞이기 때문이다.</li>
-                <li>2. 인코더가 아무리 긴 입력 문장이라도 단 하나의 고정된 크기의 '은닉 상태(Context Vector)'로 모두 압축해야만 하므로 정보 손실이 발생한다.</li>
-                <li>3. 디코더가 예측할 때 인코더의 모든 시점 데이터를 한꺼번에 참조하여 연산량이 폭발하기 때문이다.</li>
-                <li>4. 모든 활성화 함수를 시그모이드만 사용하여 항상 기울기 폭발이 일어난다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('3-30')">정답 및 해설 보기</button>
-            <div id="ans-3-30" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: Seq2Seq 모델은 인코더의 마지막 시점 은닉 상태 하나에 전체 문장의 모든 정보를 구겨 넣어야 하는 병목(Bottleneck) 현상이 있었습니다.
-            </div>
-        </div>
-    </section>
-
-    <section id="session-4">
-        <h2>📝 4회차 모의고사 (상세 구조 & 모델 변천사)</h2>
-        
-        <div class="question-card">
-            <div class="question-title">31. 트랜스포머의 디코더 구조 내부에서, 사용자의 원본 문장을 참고하기 위해 인코더의 출력 정보(Key, Value)를 가져와 자신의 쿼리(Query)와 매칭시키는 어텐션 연산을 무엇이라고 부르는가?</div>
-            <ul class="options">
-                <li>1. 셀프 어텐션 (Self-Attention)</li>
-                <li>2. 크로스 어텐션 (Cross-Attention)</li>
-                <li>3. 마스크드 셀프 어텐션 (Masked Self-Attention)</li>
-                <li>4. 스파스 어텐션 (Sparse Attention)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('4-31')">정답 및 해설 보기</button>
-            <div id="ans-4-31" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: 디코더의 Query와 인코더에서 넘어온 Key, Value를 교차하여(Cross) 연산함으로써, 정답을 생성할 때 원문 정보를 참고하게 만드는 핵심 연산입니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">32. 적대적 생성 신경망(GAN)의 학습이 가장 이상적으로 완료되어 판별자(Discriminator)가 진짜와 가짜를 전혀 구별할 수 없게 된 상태일 때, 판별자가 출력하는 확률값은 이론적으로 얼마인가?</div>
-            <ul class="options">
-                <li>1. 0</li>
-                <li>2. 1</li>
-                <li>3. 0.5</li>
-                <li>4. -1</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('4-32')">정답 및 해설 보기</button>
-            <div id="ans-4-32" class="answer-section">
-                <strong>정답: 3</strong><br>
-                해설: 생성자의 가짜 데이터가 실제 데이터와 완벽히 동일한 분포를 가지게 되면, 판별자는 이게 진짜인지 가짜인지 전혀 확신할 수 없어 반반(50%)인 0.5를 출력합니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">33. 디퓨전 모델(DDPM)에서 가우시안 노이즈가 완전히 섞인 상태(\(x_T\))로부터 시작하여, 모델을 통해 점진적으로 노이즈를 제거하며 원본을 복원해 나가는 역방향 과정(Reverse Process)을 수식적으로 나타내는 기호는?</div>
-            <ul class="options">
-                <li>1. q-process</li>
-                <li>2. p-process</li>
-                <li>3. KL-process</li>
-                <li>4. z-process</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('4-33')">정답 및 해설 보기</button>
-            <div id="ans-4-33" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: 망가뜨리는 과정을 q, 다시 학습을 통해 노이즈를 걷어내며 원상을 회복하는 샘플링 과정을 p 프로세스라고 정의합니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">34. 메타 러닝에서 새로운 클래스의 데이터(예: 이전에 본 적 없는 희귀 질병 사진)를 분류할 때, 모델이 빠르게 적응할 수 있도록 제공해 주는 아주 소량의 정답 학습 데이터셋을 부르는 용어는?</div>
-            <ul class="options">
-                <li>1. 서포트 셋 (Support Set)</li>
-                <li>2. 쿼리 셋 (Query Set)</li>
-                <li>3. 메타 트레인 셋 (Meta-Train Set)</li>
-                <li>4. 잠재 변수 셋 (Latent Set)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('4-34')">정답 및 해설 보기</button>
-            <div id="ans-4-34" class="answer-section">
-                <strong>정답: 1</strong><br>
-                해설: 모델에게 새로운 환경(Task)에 대한 '힌트'나 '모의고사' 격으로 제공되는 소량(Few-shot)의 훈련용 데이터 집합입니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">35. XAI 기법인 CAM과 Grad-CAM에 대한 비교 설명으로 가장 옳은 것은?</div>
-            <ul class="options">
-                <li>1. 둘 다 입력 이미지를 검은색 사각형으로 가려보며 결과를 확인하는 블랙박스 접근법이다.</li>
-                <li>2. Grad-CAM은 모델 구조를 전혀 변경할 필요 없이, 역전파 과정에서 구해진 기울기(Gradient) 정보를 활용해 중요도를 산출한다.</li>
-                <li>3. CAM은 연산 속도가 빠르지만 Grad-CAM은 연산 속도가 100배 이상 느리다는 단점이 있다.</li>
-                <li>4. Grad-CAM은 오직 완전 연결 계층(Fully Connected Layer)의 가중치만을 시각화하는 데 특화되어 있다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('4-35')">정답 및 해설 보기</button>
-            <div id="ans-4-35" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: GAP 층을 강제로 추가해야 했던 기존 CAM의 단점을 극복하고, 기울기(Gradient)를 이용해 범용적으로 활성화 맵을 그릴 수 있게 한 것이 Grad-CAM입니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">36. XAI 기법 중 '폐쇄 민감도(Occlusion Sensitivity)' 방식이 가지는 구조적인 단점(한계점)으로 가장 알맞은 것은?</div>
-            <ul class="options">
-                <li>1. 모델 내부의 모든 레이어 구조를 전부 GAP 방식으로 변경해야만 작동한다.</li>
-                <li>2. 이미지 전체를 패치로 가리면서 이동해 가며 매번 예측을 다시 수행해야 하므로 계산 비용(연산량)이 높다.</li>
-                <li>3. 자연어 처리(NLP) 분야에서는 전혀 사용할 수 없는 방식이다.</li>
-                <li>4. 그래디언트 소실(Vanishing Gradient) 현상이 100% 발생한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('4-36')">정답 및 해설 보기</button>
-            <div id="ans-4-36" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: 패치 크기를 정해놓고 이미지를 훑으며 수많은 추론 과정을 거쳐야 하므로, 단 한 번의 전/역전파로 끝나는 Grad-CAM에 비해 연산량이 큽니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">37. 트랜스포머의 인코더/디코더 서브 레이어 안에서 선형 연산의 한계를 극복하고 모델의 표현력을 높이기 위해 독립적으로 비선형성을 부여하는 구성 요소는?</div>
-            <ul class="options">
-                <li>1. 피드 포워드 네트워크 (Feed Forward Network, FFN)</li>
-                <li>2. 레이어 정규화 (Layer Normalization)</li>
-                <li>3. 잔차 연결 (Residual Connection)</li>
-                <li>4. 소프트맥스 (Softmax)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('4-37')">정답 및 해설 보기</button>
-            <div id="ans-4-37" class="answer-section">
-                <strong>정답: 1</strong><br>
-                해설: 어텐션 결과(선형 결합)에 각 위치별로 MLP 형태의 FFN을 적용하여 비선형성을 추가함으로써 언어의 표현력을 대폭 향상시킵니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">38. 기존 RNN의 한계를 해결한 모델 중, LSTM의 파라미터 개수를 줄이고 셀 상태와 은닉 상태를 통합하여 연산을 간소화한 모델은?</div>
-            <ul class="options">
-                <li>1. Seq2Seq</li>
-                <li>2. GRU (Gated Recurrent Unit)</li>
-                <li>3. VGG-16</li>
-                <li>4. 오토인코더 (Auto-Encoder)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('4-38')">정답 및 해설 보기</button>
-            <div id="ans-4-38" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: GRU는 LSTM의 게이트를 두 가지(Reset, Update)로 단순화하고, Cell State를 없애 Hidden State만으로 기억을 관리하는 경량화 모델입니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">39. 어떤 문제가 주어져도 인간처럼 스스로 목적을 세우고 메타 러닝을 통해 학습하여 창의적으로 해결하는 범용적 지능을 무엇이라고 부르는가?</div>
-            <ul class="options">
-                <li>1. ASI (Artificial Super Intelligence)</li>
-                <li>2. AGI (Artificial General Intelligence)</li>
-                <li>3. LLM (Large Language Model)</li>
-                <li>4. XAI (Explainable AI)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('4-39')">정답 및 해설 보기</button>
-            <div id="ans-4-39" class="answer-section">
-                <strong>정답: 2</strong><br>
-                해설: 인간과 동등한 수준의 범용적인 학습 능력, 자율적 문제 해결, 창의적 사고를 갖춘 '범용 인공지능'을 뜻합니다.
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">40. LDM 아키텍처에서, 사용자가 입력한 텍스트 프롬프트(\"우주선을 타고 있는 고양이\" 등) 조건을 U-Net 내부의 디노이징 과정에 지속적으로 주입하기 위해 사용하는 핵심 메커니즘은?</div>
-            <ul class="options">
-                <li>1. 크로스 어텐션 (Cross-Attention)</li>
-                <li>2. 오클루전 (Occlusion)</li>
-                <li>3. 잔차 블록 (Residual Block)</li>
-                <li>4. 맥스 풀링 (Max Pooling)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('4-40')">정답 및 해설 보기</button>
-            <div id="ans-4-40" class="answer-section">
-                <strong>정답: 1</strong><br>
-                해설: LDM의 U-Net 중간중간에는 텍스트 임베딩(Conditioning) 정보와 이미지 잠재 변수를 매칭시키는 크로스 어텐션 레이어가 배치되어 있습니다.
-            </div>
-        </div>
-    </section>
-
-    <section id="past-exam">
-        <h2>📚 실제 기출 족보 (총 20문제)</h2>
-        <p>※ 제공된 PDF 문서의 텍스트 기반으로 복원된 기출문제입니다.</p>
-
-        <div class="question-card">
-            <div class="question-title">1. 오토인코더(Auto-Encoder, AE)에 대한 설명 중 올바른 것에 속하는 것은?</div>
-            <ul class="options">
-                <li>1. 입력 데이터의 특징을 효율적으로 담아낸 이미지를 만들어 낸다.</li>
-                <li>2. GAN과 달리 실제로 존재하는 이미지를 생성하는 알고리즘이다.</li>
-                <li>3. 학습 데이터가 충분한 분야에서 주로 사용된다.</li>
-                <li>4. 오토인코더의 학습은 GAN의 학습보다 훨씬 어렵다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-1')">해설 보기</button>
-            <div id="ans-j-1" class="answer-section"><strong>정답: 1</strong> (데이터 압축/특징 추출)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">2. 다음 수식과 가장 관련이 깊은 방법은?<br>
-            $$H(x)=\alpha_{1}h_{1}(x)+\alpha_{2}h_{2}(x)+....+\alpha_{t}h_{t}(x)=\sum_{t=1}^{T}\alpha_{t}h_{t}(x)$$</div>
-            <ul class="options">
-                <li>1. T-Accumulating Discriminant</li>
-                <li>2. Bagging</li>
-                <li>3. RBF kernel</li>
-                <li>4. Boosting</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-2')">해설 보기</button>
-            <div id="ans-j-2" class="answer-section"><strong>정답: 4</strong> (각 모델 h(x)에 가중치 \(\alpha\)를 곱해 순차적으로 합산하는 부스팅 수식)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">3. 다음 프로그램 빈칸 (A)에 가장 적합한 내용이 될 수 있는 것은?
-<div class="code-block">#학습 환경을 설정합니다.
-clf1 = AdaBoostClassifier()
-c1f2 = RandomForestClassifier()
-c1f3 = SVC(kernel='linear')
-classifier = (A)(estimators=[('lr', clf1), ('rf', clf2), ('gnb', c1f3)])
-classifier.fit(X_train, y_train)</div></div>
-            <ul class="options">
-                <li>1. VotingClassifier</li>
-                <li>2. BaggingClassifier</li>
-                <li>3. RandomForestClassifier</li>
-                <li>4. KNeighborsClassifier</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-3')">해설 보기</button>
-            <div id="ans-j-3" class="answer-section"><strong>정답: 1</strong> (여러 개의 각기 다른 모델을 합쳐서 앙상블하는 방법은 Voting)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">4. LSTM의 임시 cell state에 관한 내용 중 상관이 없는 것은?</div>
-            <ul class="options">
-                <li>1. 임시 cell state는 수식적으로 일반 RNN의 hidden state 계산과 유사하다.</li>
-                <li>2. 임시 cell state는 현재 입력값과 과거 hidden state 정보를 요약하여 계산한다.</li>
-                <li>3. 임시 cell state는 게이트 연산을 통해 최종 cell state로 구성된다.</li>
-                <li>4. 최종 cell state는 0~1 사이 값으로 제한된다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-4')">해설 보기</button>
-            <div id="ans-j-4" class="answer-section"><strong>정답: 4</strong> (Cell state 자체가 0~1로 제한되는 것이 아니라, 통과하는 Gate의 활성화 함수(Sigmoid)가 0~1 값입니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">5. 다음 그림에서 *의 역할로 옳은 것은? [이미지 생략: MAML 관련 그림]</div>
-            <ul class="options">
-                <li>1. *는 고정된 메타 파라미터 아래 지원 집합 D를 이용해 과제(task)별 특화 파라미터를 최적화한 값임</li>
-                <li>2. *는 전체 메타 학습 과정에서 모든 과제에 공통으로 학습된 전역(global) 파라미터임</li>
-                <li>3. *는 테스트 단계에서 *를 고정하고 쿼리 데이터 X_ts에 맞추어 추가로 최적화되는 파라미터임</li>
-                <li>4. D는 테스트 시점에 예측 성능을 검증하기 위해 사용되는 쿼리 집합을 의미함</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-5')">해설 보기</button>
-            <div id="ans-j-5" class="answer-section"><strong>정답: 1</strong> (해당 기호는 특정 태스크에 맞춰 적응된 파라미터 \(\phi\)를 의미합니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">6. 아래 그림은 LDM의 Stable Diffusion을 수업에서 설명한 그림이다. 왼쪽 그림의 (A)~(D)와 우측 그림의 (A)~(D)의 짝이 바르게 짝지어진 것은? [이미지 생략]</div>
-            <ul class="options">
-                <li>1. 왼편의 (D)와 오른쪽의 (C)</li>
-                <li>2. 왼편의 (A)와 오른쪽의 (C)</li>
-                <li>3. 왼편의 (B)와 오른쪽의 (D)</li>
-                <li>4. 왼편의 (C)와 오른쪽의 (B)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-6')">해설 보기</button>
-            <div id="ans-j-6" class="answer-section"><strong>정답: 확인 필요(해당 이미지가 없어 명확한 판별 불가)</strong> (통상적으로 Encoder/Decoder와 Diffusion Process 매핑을 의미함)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">7. XAI 수업에서 Occlusion Sensitivity 방식에 대한 설명으로 옳지 않은 것은?</div>
-            <ul class="options">
-                <li>1. 평균값(GAP)을 이용한다.</li>
-                <li>2. 마스크(Mask)방식을 이용한다.</li>
-                <li>3. 일부를 가려서 가장 중요한 부분을 판별하고자 하는 방식이다.</li>
-                <li>4. 실습을 위해 수업 시간에 설명한 라이브러리는 tf-explain 이다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-7')">해설 보기</button>
-            <div id="ans-j-7" class="answer-section"><strong>정답: 1</strong> (GAP는 CAM 방식에서 사용합니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">8. DCGAN (Deep Convolutional GAN)에 대한 설명으로 올바르지 않은 것은?</div>
-            <ul class="options">
-                <li>1. 옵티마이저를 사용하는 최적화 과정이나 컴파일하는 과정이 없다.</li>
-                <li>2. 일부 매개변수를 삭제하는 풀링 과정이 없는 대신 패딩 과정이 포함된다.</li>
-                <li>3. 생성자가 가짜 이미지를 만들 때, 컨볼루션 신경망을 이용한다.</li>
-                <li>4. 학습 데이터를 생성해서 학습 데이터 수를 늘려 주는 효과를 위해 사용한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-8')">해설 보기</button>
-            <div id="ans-j-8" class="answer-section"><strong>정답: 1</strong> (GAN도 생성자와 판별자를 번갈아가며 최적화(Optimizer)하는 과정이 명확히 존재합니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">9. 이동 평균법(moving average)에 대한 설명 중 설명 중 가장 올바른 것은?</div>
-            <ul class="options">
-                <li>1. 가중이동평균에서 모든 데이터에 대한 가중치는 동일하다.</li>
-                <li>2. 누적이동평균은 균등하게 가중된 n값들의 시퀀스인, x1, ..., xn의 현재까지 평균을 의미한다.</li>
-                <li>3. 단순이동평균은 이전 n개 데이터의 가중 평균을 의미한다.</li>
-                <li>4. 지수이동평균은 오래된 데이터에 대한 가중치가 점차 증가한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-9')">해설 보기</button>
-            <div id="ans-j-9" class="answer-section"><strong>정답: 2</strong> (1은 단순, 3은 가중, 4는 반대(오래될수록 감소) 설명)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">10. GAN에서 fake에 대한 discriminator, D()의 손실 함수는 어떻게 정의될 수 있는가?</div>
-            <ul class="options">
-                <li>1. -log (D(x))</li>
-                <li>2. log (D(x))</li>
-                <li>3. -log (1-D(x))</li>
-                <li>4. log (1-D(x))</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-10')">해설 보기</button>
-            <div id="ans-j-10" class="answer-section"><strong>정답: 4</strong> (또는 3, 구체적 최적화 방향에 따라 부호가 붙습니다. 일반적인 Value 함수에서는 \(\log(1-D(G(z)))\) 형태입니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">11. CFG 수식과 관련된 설명으로 가장 거리가 먼 것은? <br>
-            $$\nabla_{x}log~p_{\gamma}(x|y)=(1-\gamma)\nabla_{x}log~p(x)+\gamma\nabla_{x}log~p(x|y)$$</div>
-            <ul class="options">
-                <li>1. 조건 없는 예측 결과를 보정하여 조건 결과 확률을 강화하는 구조이다.</li>
-                <li>2. 원본 키값 복구 또는 w가 클수록 조건 정보에 대한 강조가 강해진다.</li>
-                <li>3. 이 방식은 라벨 분포를 기반으로 softmax를 조절하여 조건 생성 품질을 높이는 방식이다.</li>
-                <li>4. CFG는 조건이 없는 예측도 함께 학습하여 조건 정보 없이도 생성이 가능하도록 한다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-11')">해설 보기</button>
-            <div id="ans-j-11" class="answer-section"><strong>정답: 3</strong> (CFG는 Softmax를 조절하는 방식이 아니라 예측 노이즈 벡터들을 선형 결합(보간)하여 방향을 트는 방식입니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">12. Attention Mechanism에서 Attention Score를 만드는 방법에 해당하지 않는 것은?</div>
-            <ul class="options">
-                <li>1. 벡터의 내적</li>
-                <li>2. 코사인 유사도</li>
-                <li>3. 유클리디언 디스턴스</li>
-                <li>4. 하이퍼볼릭 탄젠트</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-12')">해설 보기</button>
-            <div id="ans-j-12" class="answer-section"><strong>정답: 3</strong> (주로 내적이나 코사인 유사도와 같은 방향성/유사도 기반 측정 방식을 사용합니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">13. 순환신경망의 구조 중, many to one 구조에 대한 설명으로 옳은 것은?</div>
-            <ul class="options">
-                <li>1. 영어 문장이 주어졌을 때, 한글 문장으로 번역 예측</li>
-                <li>2. 문장이 주어졌을 때, 각 단어의 품사를 예측하는 POS 태킹</li>
-                <li>3. 여러 시점에 다변량센서 데이터가 주어졌을 때, 특정 시점의 제품의 상태를 확인</li>
-                <li>4. 이미지 데이터가 주어졌을 때, 이미지에 대한 정보를 글로 생성하는 이미지 캡셔닝</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-13')">해설 보기</button>
-            <div id="ans-j-13" class="answer-section"><strong>정답: 3</strong> (여러 시점(Many)의 데이터로 하나의 결론(One)을 도출하는 Classification 형태)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">14. 아래 그림과 관련된 방법 설명으로 옳지 않은 것은? [이미지 생략: Classifier Guidance (CG)]</div>
-            <ul class="options">
-                <li>1. 기존 pre-trained model을 사용할 수 없다.</li>
-                <li>2. 모든 noise 각 level에 대해서 독자적으로 학습된 Classifier가 필요하다.</li>
-                <li>3. Classifier가 noisy한 이미지를 구별을 해서, 적절한 gradient를 만들어 주어야 한다.</li>
-                <li>4. noise가 추가된 image를 검증해야 하지만 모든 time step에 대해 수행할 필요는 없다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-14')">해설 보기</button>
-            <div id="ans-j-14" class="answer-section"><strong>정답: 4</strong> (CG 방식은 노이즈가 있는 모든 타임스텝에 대응하는 분류기가 필요하여 비용이 높습니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">15. 다음은 DDPM의 Reverse Process를 나타낸 수식이다. 부분 중, Reconstruction Term에 해당하는 것은? <br>
-            $$\min \mathbb{E}_{q}[\underbrace{D_{KL}(q(x_{T}|x_{0})||p(x_{T}))}_{\text{1번}} + \sum_{t>1}\underbrace{D_{KL}(q(x_{t-1}|x_{t},x_{0})||p_{\theta}(x_{t-1}|x_{t}))}_{\text{2번}} \underbrace{- \log p_{\theta}(x_{0}|x_{1})}_{\text{3번}}]$$</div>
-            <ul class="options">
-                <li>1. 1번항</li>
-                <li>2. 2번항</li>
-                <li>3. 3번항</li>
-                <li>4. 4번항 (보기 없음)</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-15')">해설 보기</button>
-            <div id="ans-j-15" class="answer-section"><strong>정답: 3</strong> (가장 마지막 스텝인 \(x_1\)에서 원본 \(x_0\)를 복원(Reconstruction)하는 항입니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">16. Data D에 대한 다음 수식이 있을 때, 아래 메타 러닝 관련 설명 중 가장 거리가 먼 것은? <br>
-            $\phi^{*}=argmax_{\phi}log~p(\phi|D)$ <br>
-            $=argmax_{\phi}log~p(D|\phi)+log~p(\phi)$</div>
-            <ul class="options">
-                <li>1. p(\(\phi\)|D)는 데이터 D가 주어졌을 때 파라미터가 맞을 사후 확률이다.</li>
-                <li>2. log p(D|\(\phi\)): 주어진 파라미터일 때, 데이터 D가 나올 가능성을 나타내는 likelihood 라 할 수 있다.</li>
-                <li>3. k가 커질수록 감독학습이 잘 동작하지 않는 문제가 메타 러닝 등장 배경이다.</li>
-                <li>4. argmax는 \(\phi\)를 바꿔가며 최대값을 주는 \(\phi^{*}\)를 찾는 것이다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-16')">해설 보기</button>
-            <div id="ans-j-16" class="answer-section"><strong>정답: 3</strong> (k가 '작을수록(데이터가 적을수록)' 딥러닝이 동작하지 않는 Few-Shot Learning의 한계가 메타 러닝의 등장 배경입니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">17. GAN 모델의 손실 함수는 이진 크로스 엔트로피(BCE) 함수를 기반으로 한다고 하였다. 설명으로 옳지 않은 것은?</div>
-            <ul class="options">
-                <li>1. 정답에 수렴하는 정확도가 중요하기 때문에 이진 방법을 사용함</li>
-                <li>2. 주어진 이미지가 진짜인지 가짜인지 판별해야 하기 때문에 이진이 적당하기 때문</li>
-                <li>3. BCE 함수는 진짜 데이터가 들어오는 경우는 discriminator의 출력값이 1이어야 함</li>
-                <li>4. BCE 함수에서 가짜 데이터의 경우, 앞 항인 "$y_i \log(p(y_i))$"은 0이 됨</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-17')">해설 보기</button>
-            <div id="ans-j-17" class="answer-section"><strong>정답: 1</strong> (GAN은 명확한 '정답 수렴'보다는 생성자와 판별자의 '균형(내시 균형)'을 찾는 것이 핵심입니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">18. 수업에서 설명한, seq2seq 구조의 한계점에 대한 설명으로 옳은 것은?</div>
-            <ul class="options">
-                <li>1. decoder가 문장을 예측할 때, encoder의 마지막 시점 은닉층 정보만을 활용</li>
-                <li>2. encoder가 문장을 예측할 때, decoder의 마지막 시점 은닉층 정보만을 활용</li>
-                <li>3. decoder가 단어를 예측할 때, encoder의 마지막 시점 은닉층 정보만을 활용</li>
-                <li>4. encoder가 단어를 예측할 때, decoder의 마지막 시점 은닉층 정보만을 활용</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-18')">해설 보기</button>
-            <div id="ans-j-18" class="answer-section"><strong>정답: 3</strong> (디코더가 출력 단어를 생성할 때, 인코더의 '마지막 은닉 상태(Context Vector)' 하나에만 의존하는 구조적 한계(병목)입니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">19. Occlusion Sensitivity 방식을 구현하는 프로그램 파라미터에 대한 설명 중 옳지 않은 것은?
-<div class="code-block">explainer = OcclusionSensitivity()
-output = explainer.explain((A), (B), (C), (D))</div></div>
-            <ul class="options">
-                <li>1. (A)~(D) 중 하나로 학습률을 설정한다.</li>
-                <li>2. (A)~(D) 중 하나로 데이터를 입력으로 설정한다.</li>
-                <li>3. 인자를 통해 패치를 크게 잡으면 조금 더 넓은 범위의 결과가 나온다.</li>
-                <li>4. 모델과 클래스를 정의해 줄 수 있다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-19')">해설 보기</button>
-            <div id="ans-j-19" class="answer-section"><strong>정답: 1</strong> (추론 기반의 블랙박스 설명 방식이므로 학습(학습률)을 진행하지 않습니다)</div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-title">20. 다음 그림에 관한 내용 중 상관이 없는 것은? [이미지 생략: GRU Cell 구조]</div>
-            <ul class="options">
-                <li>1. LSTM의 output gate를 없앤 대신 reset gate를 만들었다.</li>
-                <li>2. LSTM의 forget gate와 output gate를 update gate로 통합하였다.</li>
-                <li>3. LSTM에서 파라미터의 개수를 줄인 모델이라 할 수 있다.</li>
-                <li>4. LSTM의 cell state와 hidden state를 hidden state로 통합하였다.</li>
-            </ul>
-            <button class="answer-btn" onclick="toggleAnswer('j-20')">해설 보기</button>
-            <div id="ans-j-20" class="answer-section"><strong>정답: 2</strong> (GRU는 Forget Gate와 Input Gate를 결합하여 Update Gate를 만듭니다)</div>
-        </div>
-    </section>
-
+const btn = document.getElementById('toggleAll');
+btn.addEventListener('click', ()=>{
+  const open = btn.getAttribute('aria-pressed')==='false';
+  document.querySelectorAll('details.ans').forEach(d=> d.open = open);
+  btn.setAttribute('aria-pressed', String(open));
+  btn.textContent = open ? '정답 모두 접기' : '정답 모두 펼치기';
+});
+</script>
 </body>
 </html>
