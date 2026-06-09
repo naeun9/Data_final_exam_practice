@@ -13,6 +13,7 @@ window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['$$', '$$
   --bg:#f4f5f7; --surface:#ffffff; --ink:#1c2230; --muted:#5a6273;
   --line:#e2e5eb; --brand:#3b4cca; --brand-ink:#2c3aa8;
   --ok-bg:#e7f5ee; --ok-line:#1f9d63; --ok-ink:#13653f;
+  --no-bg:#fdeaea; --no-line:#d64545; --no-ink:#9c2a2a;
   --code-bg:#1e2230; --code-ink:#e7eaf3;
   --focus:#1f63ff; --radius:14px;
 }
@@ -21,6 +22,7 @@ window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['$$', '$$
     --bg:#11141b; --surface:#1a1e29; --ink:#eef1f7; --muted:#a3acbe;
     --line:#2b3140; --brand:#8b9bff; --brand-ink:#aab6ff;
     --ok-bg:#10261c; --ok-line:#34c27d; --ok-ink:#7ee2b0;
+    --no-bg:#2a1313; --no-line:#e26a6a; --no-ink:#f3a3a3;
     --code-bg:#0c0e15; --code-ink:#e3e7f2; --focus:#7aa2ff;
   }
 }
@@ -57,7 +59,7 @@ nav.toc a:focus-visible, .ctrl:focus-visible, summary:focus-visible, .toc a:focu
   outline:3px solid var(--focus); outline-offset:2px;
 }
 
-.controls{display:flex; justify-content:flex-end; margin:0 0 16px;}
+.controls{display:flex; justify-content:space-between; align-items:center; gap:12px; margin:0 0 16px; font-size:.85rem; font-weight:600; color:var(--muted);}
 .ctrl{
   font:inherit; font-size:.85rem; font-weight:600; cursor:pointer;
   background:var(--surface); color:var(--ink); border:1px solid var(--line);
@@ -89,20 +91,34 @@ article.q .qnum{
 }
 article.q .qtext{font-weight:600; font-size:1.02rem; margin:0;}
 ol.opts{list-style:none; counter-reset:opt; margin:16px 0 0; padding:0;}
-ol.opts li{
-  counter-increment:opt; position:relative; padding:11px 14px 11px 44px;
+ol.opts li{counter-increment:opt; margin-bottom:8px;}
+ol.opts .opt{
+  font:inherit; font-size:.95rem; text-align:left; width:100%; cursor:pointer;
+  position:relative; padding:11px 40px 11px 44px;
   background:color-mix(in srgb, var(--ink) 3%, transparent);
-  border:1px solid transparent; border-radius:9px; margin-bottom:8px; font-size:.95rem;
+  border:1px solid var(--line); border-radius:9px; color:var(--ink); display:block;
 }
-ol.opts li::before{
+ol.opts .opt:hover:not(:disabled){border-color:var(--brand);}
+ol.opts .opt:focus-visible{outline:3px solid var(--focus); outline-offset:2px;}
+ol.opts .opt::before{
   content:counter(opt); position:absolute; left:12px; top:50%; transform:translateY(-50%);
   width:22px; height:22px; border-radius:50%; border:1.5px solid var(--line);
   display:grid; place-items:center; font-size:.78rem; font-weight:700; color:var(--muted);
 }
-ol.opts li.is-answer{
+ol.opts .opt:disabled{cursor:default;}
+ol.opts .opt.correct{
   background:var(--ok-bg); border-color:var(--ok-line); color:var(--ok-ink); font-weight:600;
 }
-ol.opts li.is-answer::before{border-color:var(--ok-line); color:var(--ok-ink); background:transparent;}
+ol.opts .opt.correct::before{border-color:var(--ok-line); color:var(--ok-ink);}
+ol.opts .opt.correct::after{content:"정답 ✓"; position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:.72rem; font-weight:700; color:var(--ok-ink);}
+ol.opts .opt.wrong{
+  background:var(--no-bg); border-color:var(--no-line); color:var(--no-ink); font-weight:600;
+}
+ol.opts .opt.wrong::before{border-color:var(--no-line); color:var(--no-ink);}
+ol.opts .opt.wrong::after{content:"내 선택 ✗"; position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:.72rem; font-weight:700; color:var(--no-ink);}
+.result{font-size:.85rem; font-weight:700; margin:12px 0 0; min-height:1px;}
+.result.r-ok{color:var(--ok-ink);}
+.result.r-no{color:var(--no-ink);}
 
 details.ans{margin-top:14px; border-top:1px dashed var(--line); padding-top:14px;}
 details.ans > summary{
@@ -147,7 +163,8 @@ mjx-container{overflow-x:auto; overflow-y:hidden;}
   </nav>
 
   <div class="controls">
-    <button class="ctrl" id="toggleAll" type="button" aria-pressed="false">정답 모두 펼치기</button>
+    <span id="score" aria-live="polite"></span>
+    <button class="ctrl" id="toggleAll" type="button" aria-pressed="false">정답·해설 모두 보기</button>
   </div>
 
   <main id="main"></main>
@@ -360,17 +377,18 @@ data.forEach(sec=>{
   let html = `<h2 id="${sec.id}-h">${sec.title}<span class="badge">${sec.badge}</span></h2>`;
   html += `<p class="sec-desc">${sec.desc}</p>`;
   sec.q.forEach(item=>{
-    const opts = item.o.map((t,i)=>`<li${i===item.a-1?' class="is-answer"':''}>${t}</li>`).join('');
+    const opts = item.o.map((t,i)=>`<li><button type="button" class="opt" data-correct="${i===item.a-1?'1':'0'}">${t}</button></li>`).join('');
     const noteHtml = item.note?`<p class="note">${item.note}</p>`:'';
     const ansLabel = item.a>0?`정답 ${item.a}번`:'정답 확인 필요';
     html += `
-    <article class="q">
+    <article class="q" data-answer="${item.a}">
       <div class="qhead">
         <span class="qnum">${item.n}</span>
         <p class="qtext">${item.q}</p>
       </div>
       ${noteHtml}
       <ol class="opts">${opts}</ol>
+      <p class="result" role="status" aria-live="polite"></p>
       <details class="ans">
         <summary>정답 및 해설</summary>
         <div class="body"><span class="a-label">${ansLabel}</span>${item.e}</div>
@@ -381,12 +399,49 @@ data.forEach(sec=>{
   main.appendChild(s);
 });
 
+let solved = 0, correctCount = 0;
+const scoreEl = document.getElementById('score');
+function updateScore(){ scoreEl.textContent = `맞힘 ${correctCount} / 푼 문제 ${solved} (전체 60)`; }
+updateScore();
+
+main.addEventListener('click', e=>{
+  const opt = e.target.closest('.opt');
+  if(!opt) return;
+  const article = opt.closest('.q');
+  if(article.dataset.done) return;          // 이미 푼 문제는 잠금
+  article.dataset.done = '1';
+
+  const isCorrect = opt.dataset.correct === '1';
+  const result = article.querySelector('.result');
+  const buttons = article.querySelectorAll('.opt');
+
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.dataset.correct === '1') b.classList.add('correct');
+  });
+  if(!isCorrect) opt.classList.add('wrong');
+
+  solved++;
+  if(isCorrect){ correctCount++; result.textContent = '정답입니다 ✓'; result.className = 'result r-ok'; }
+  else { result.textContent = `오답입니다 ✗  정답은 ${article.dataset.answer}번`; result.className = 'result r-no'; }
+  updateScore();
+});
+
 const btn = document.getElementById('toggleAll');
 btn.addEventListener('click', ()=>{
-  const open = btn.getAttribute('aria-pressed')==='false';
-  document.querySelectorAll('details.ans').forEach(d=> d.open = open);
-  btn.setAttribute('aria-pressed', String(open));
-  btn.textContent = open ? '정답 모두 접기' : '정답 모두 펼치기';
+  const reveal = btn.getAttribute('aria-pressed')==='false';
+  document.querySelectorAll('.q').forEach(article=>{
+    document.querySelectorAll('details.ans').forEach(d=> d.open = reveal);
+    if(reveal && !article.dataset.done){
+      article.dataset.done = '1';
+      article.querySelectorAll('.opt').forEach(b=>{
+        b.disabled = true;
+        if(b.dataset.correct === '1') b.classList.add('correct');
+      });
+    }
+  });
+  btn.setAttribute('aria-pressed', String(reveal));
+  btn.textContent = reveal ? '정답·해설 접기' : '정답·해설 모두 보기';
 });
 </script>
 </body>
