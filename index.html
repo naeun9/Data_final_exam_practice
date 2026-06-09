@@ -45,21 +45,29 @@ header .eyebrow{font-size:.8rem; letter-spacing:.14em; text-transform:uppercase;
 header h1{font-size:clamp(1.7rem,5vw,2.5rem); line-height:1.2; margin:.4em 0 .25em; letter-spacing:-.02em;}
 header p{color:var(--muted); margin:0; font-size:.95rem;}
 
-nav.toc{
+nav.tabs{
   position:sticky; top:0; z-index:20; background:var(--bg);
   display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
   padding:14px 0; margin-bottom:18px; border-bottom:1px solid var(--line);
 }
-nav.toc a{
-  font-size:.85rem; font-weight:600; text-decoration:none; color:var(--muted);
-  padding:7px 13px; border:1px solid var(--line); border-radius:999px; background:var(--surface);
+nav.tabs button{
+  font:inherit; font-size:.85rem; font-weight:600; cursor:pointer; color:var(--muted);
+  padding:8px 16px; border:1px solid var(--line); border-radius:999px; background:var(--surface);
 }
-nav.toc a:hover{color:var(--ink); border-color:var(--brand);}
-nav.toc a:focus-visible, .ctrl:focus-visible, summary:focus-visible, .toc a:focus-visible{
+nav.tabs button:hover{color:var(--ink); border-color:var(--brand);}
+nav.tabs button[aria-selected="true"]{
+  color:#fff; background:var(--brand); border-color:var(--brand);
+}
+@media (prefers-color-scheme: dark){
+  nav.tabs button[aria-selected="true"]{color:#11141b;}
+}
+nav.tabs button:focus-visible, .ctrl:focus-visible, summary:focus-visible{
   outline:3px solid var(--focus); outline-offset:2px;
 }
+section[hidden]{display:none;}
 
 .controls{display:flex; justify-content:space-between; align-items:center; gap:12px; margin:0 0 16px; font-size:.85rem; font-weight:600; color:var(--muted);}
+.controls .btns{display:flex; gap:8px;}
 .ctrl{
   font:inherit; font-size:.85rem; font-weight:600; cursor:pointer;
   background:var(--surface); color:var(--ink); border:1px solid var(--line);
@@ -154,17 +162,14 @@ mjx-container{overflow-x:auto; overflow-y:hidden;}
     <p>모의고사 4회차 · 기출 족보 20문제 — 총 60문제</p>
   </header>
 
-  <nav class="toc" aria-label="회차 바로가기">
-    <a href="#s1">1회차</a>
-    <a href="#s2">2회차</a>
-    <a href="#s3">3회차</a>
-    <a href="#s4">4회차</a>
-    <a href="#s5">기출 족보</a>
-  </nav>
+  <nav class="tabs" role="tablist" aria-label="회차 선택"></nav>
 
   <div class="controls">
     <span id="score" aria-live="polite"></span>
-    <button class="ctrl" id="toggleAll" type="button" aria-pressed="false">정답·해설 모두 보기</button>
+    <div class="btns">
+      <button class="ctrl" id="resetBtn" type="button">다시 풀기</button>
+      <button class="ctrl" id="toggleAll" type="button" aria-pressed="false">정답·해설 보기</button>
+    </div>
   </div>
 
   <main id="main"></main>
@@ -370,10 +375,13 @@ const data = [
 ];
 
 const main = document.getElementById('main');
-data.forEach(sec=>{
+data.forEach((sec,si)=>{
   const s = document.createElement('section');
   s.id = sec.id;
-  s.setAttribute('aria-labelledby', sec.id+'-h');
+  s.setAttribute('role','tabpanel');
+  s.setAttribute('aria-labelledby', 'tab-'+sec.id);
+  s.tabIndex = 0;
+  if(si!==0) s.hidden = true;
   let html = `<h2 id="${sec.id}-h">${sec.title}<span class="badge">${sec.badge}</span></h2>`;
   html += `<p class="sec-desc">${sec.desc}</p>`;
   sec.q.forEach(item=>{
@@ -399,41 +407,100 @@ data.forEach(sec=>{
   main.appendChild(s);
 });
 
-let solved = 0, correctCount = 0;
+// 탭 생성
+const tablist = document.querySelector('nav.tabs');
+const panels = Array.from(document.querySelectorAll('section[role="tabpanel"]'));
+const tabs = data.map((sec,i)=>{
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.id = 'tab-'+sec.id;
+  b.setAttribute('role','tab');
+  b.setAttribute('aria-controls', sec.id);
+  b.setAttribute('aria-selected', i===0?'true':'false');
+  b.tabIndex = i===0?0:-1;
+  b.textContent = (i < data.length-1) ? `${i+1}회차` : '기출 족보';
+  b.addEventListener('click', ()=> selectTab(i));
+  tablist.appendChild(b);
+  return b;
+});
+function selectTab(i){
+  tabs.forEach((t,j)=>{
+    const on = i===j;
+    t.setAttribute('aria-selected', on?'true':'false');
+    t.tabIndex = on?0:-1;
+    panels[j].hidden = !on;
+  });
+  syncToggleBtn();
+}
+tablist.addEventListener('keydown', e=>{
+  const cur = tabs.findIndex(t=>t.getAttribute('aria-selected')==='true');
+  let next = -1;
+  if(e.key==='ArrowRight') next = (cur+1)%tabs.length;
+  else if(e.key==='ArrowLeft') next = (cur-1+tabs.length)%tabs.length;
+  if(next>=0){ e.preventDefault(); selectTab(next); tabs[next].focus(); }
+});
+function currentPanel(){ return panels.find(p=>!p.hidden); }
+
+// 점수 (전체 60 기준, 매번 재계산)
 const scoreEl = document.getElementById('score');
-function updateScore(){ scoreEl.textContent = `맞힘 ${correctCount} / 푼 문제 ${solved} (전체 60)`; }
+function updateScore(){
+  const ok = document.querySelectorAll('.q[data-result="ok"]').length;
+  const no = document.querySelectorAll('.q[data-result="no"]').length;
+  scoreEl.textContent = `맞힘 ${ok} / 푼 문제 ${ok+no} (전체 60)`;
+}
 updateScore();
 
+// 채점
 main.addEventListener('click', e=>{
   const opt = e.target.closest('.opt');
   if(!opt) return;
   const article = opt.closest('.q');
-  if(article.dataset.done) return;          // 이미 푼 문제는 잠금
-  article.dataset.done = '1';
-
+  if(article.dataset.result) return;
   const isCorrect = opt.dataset.correct === '1';
-  const result = article.querySelector('.result');
-  const buttons = article.querySelectorAll('.opt');
+  article.dataset.result = isCorrect ? 'ok' : 'no';
 
-  buttons.forEach(b=>{
+  article.querySelectorAll('.opt').forEach(b=>{
     b.disabled = true;
     if(b.dataset.correct === '1') b.classList.add('correct');
   });
   if(!isCorrect) opt.classList.add('wrong');
 
-  solved++;
-  if(isCorrect){ correctCount++; result.textContent = '정답입니다 ✓'; result.className = 'result r-ok'; }
+  const result = article.querySelector('.result');
+  if(isCorrect){ result.textContent = '정답입니다 ✓'; result.className = 'result r-ok'; }
   else { result.textContent = `오답입니다 ✗  정답은 ${article.dataset.answer}번`; result.className = 'result r-no'; }
   updateScore();
 });
 
+// 다시 풀기 (현재 회차)
+function resetArticle(article){
+  delete article.dataset.result;
+  article.querySelectorAll('.opt').forEach(b=>{
+    b.disabled = false; b.classList.remove('correct','wrong');
+  });
+  const r = article.querySelector('.result'); r.textContent = ''; r.className = 'result';
+  article.querySelector('details.ans').open = false;
+}
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  currentPanel().querySelectorAll('.q').forEach(resetArticle);
+  syncToggleBtn();
+  updateScore();
+});
+
+// 정답·해설 보기 (현재 회차)
 const btn = document.getElementById('toggleAll');
+function syncToggleBtn(){
+  const panel = currentPanel();
+  const anyOpen = panel.querySelector('details.ans[open]');
+  btn.setAttribute('aria-pressed', anyOpen?'true':'false');
+  btn.textContent = anyOpen ? '정답·해설 접기' : '정답·해설 보기';
+}
 btn.addEventListener('click', ()=>{
+  const panel = currentPanel();
   const reveal = btn.getAttribute('aria-pressed')==='false';
-  document.querySelectorAll('.q').forEach(article=>{
-    document.querySelectorAll('details.ans').forEach(d=> d.open = reveal);
-    if(reveal && !article.dataset.done){
-      article.dataset.done = '1';
+  panel.querySelectorAll('.q').forEach(article=>{
+    article.querySelector('details.ans').open = reveal;
+    if(reveal && !article.dataset.result){
+      article.dataset.result = 'reveal';
       article.querySelectorAll('.opt').forEach(b=>{
         b.disabled = true;
         if(b.dataset.correct === '1') b.classList.add('correct');
@@ -441,7 +508,8 @@ btn.addEventListener('click', ()=>{
     }
   });
   btn.setAttribute('aria-pressed', String(reveal));
-  btn.textContent = reveal ? '정답·해설 접기' : '정답·해설 모두 보기';
+  btn.textContent = reveal ? '정답·해설 접기' : '정답·해설 보기';
+  updateScore();
 });
 </script>
 </body>
